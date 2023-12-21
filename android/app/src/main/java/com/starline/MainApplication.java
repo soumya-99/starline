@@ -1,4 +1,4 @@
-package com.starline;
+package com.superwin;
 
 import android.app.Application;
 import com.facebook.react.PackageList;

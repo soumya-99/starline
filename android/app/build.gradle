@@ -75,13 +75,13 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.starline"
+    namespace "com.superwin"
     defaultConfig {
-        applicationId "com.starline"
+        applicationId "com.superwin"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "1.0"
+        versionName "2.0"
     }
     signingConfigs {
        
