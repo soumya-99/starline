@@ -177,6 +177,75 @@ const Home = ({navigation}) => {
       </>
     );
   };
+  const GameListCustom = ({item, index}) => {
+    return (
+      <>
+        {/* Main Cointainer */}
+        <View style={{width: '100%'}}>
+          <View
+            style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.2)',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              paddingVertical: 10,
+              paddingHorizontal: 15,
+              alignItems: 'center',
+              marginBottom: 10,
+              marginTop: 10,
+              marginLeft: 10,
+            }}>
+            <View
+              style={{
+                position: 'absolute',
+                left: -10,
+                top: -10,
+                height: 50,
+                width: 50,
+                borderWidth: 2,
+                borderBottomColor: 'red',
+                borderTopColor: 'yellow',
+                borderLeftColor: 'green',
+                backgroundColor: '#fff',
+              }}>
+              {/* image */}
+              <Image
+                source={require('../../assets/icon/dice.png')}
+                style={{width: '100%', height: '100%'}}
+                resizeMode="cover"
+              />
+            </View>
+            {/* Game Name */}
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: 'bold',
+                color: 'white',
+                left: 30,
+                maxWidth: '70%',
+                textAlign: 'center',
+                width: '70%',
+                backgroundColor: '#ff2937',
+              }}>
+              {item.game_name}
+            </Text>
+
+            {/* Play container */}
+            <TouchableOpacity
+              onPress={() => navigation.navigate('TgrVsElphnt')}
+              style={{
+                backgroundColor: 'yellow',
+                paddingVertical: 5,
+                paddingHorizontal: 10,
+              }}>
+              <Text style={{fontSize: 16, fontWeight: 'bold', color: 'black'}}>
+                Play
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </>
+    );
+  };
 
   useEffect(() => {
     if (!userInfo) {
@@ -210,18 +279,18 @@ const Home = ({navigation}) => {
         </View>
         <View style={styles.list_container2}>
           <View style={styles.list_sub_container}>
-            <FlatList
+            {/* <FlatList
               data={gameNameList}
               keyExtractor={item => item.game_id}
               renderItem={({item, index}) => (
                 <GameListTwo item={item} index={index} />
               )}
-            />
+            /> */}
 
-            {/* <GameListTwo item={item} index={index} /> */}
-            <Button onPress={() => navigation.navigate('TgrVsElphnt')}>
-              Tiger Vs Elephant
-            </Button>
+            <GameListCustom
+              item={{game_name: 'Tiger Vs Elephant', game_id: 21}}
+              index={3}
+            />
           </View>
         </View>
       </View>
@@ -335,5 +404,9 @@ const styles = StyleSheet.create({
     padding: normalize(1),
     backgroundColor: 'green',
     flex: 1,
+  },
+  btnContainer: {
+    padding: 50,
+    width: '100%',
   },
 });
