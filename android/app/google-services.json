@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "310456735939",
+    "project_id": "starline-ac1c1",
+    "storage_bucket": "starline-ac1c1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:310456735939:android:b0ca7ab383256f25886a76",
+        "android_client_info": {
+          "package_name": "com.starline"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "310456735939-q41sgloblnqilsdg00c67akv4do9npju.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlqmtlTH8OLKxVdJGra3h7xMxLO4u1wfg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "310456735939-q41sgloblnqilsdg00c67akv4do9npju.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
