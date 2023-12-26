@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     margin: 10,
     height: 150,
     width: 150,
-    backgroundColor: 'red',
+    backgroundColor: 'blue',
     borderRadius: 20,
   },
   btnContainer: {
