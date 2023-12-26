@@ -5,6 +5,7 @@ import Home from '../../page/home/Home';
 import GameTime from '../../page/home/GameTime';
 import GameEntry from '../../page/home/GameEntry';
 import TigerVsElephant from '../../page/tigervselephant/TigerVsElephant';
+import WheelOfFortune from '../../page/wheeloffortune/WheelOfFortune';
 const Stack = createStackNavigator();
 
 const HomeNavigation = () => {
@@ -51,6 +52,15 @@ const HomeNavigation = () => {
           options={{
             headerShown: false,
             tabBarLabel: 'TigerVsElephant',
+          }}
+        />
+
+        <Stack.Screen
+          name="WhlOfFortune"
+          component={WheelOfFortune}
+          options={{
+            headerShown: false,
+            tabBarLabel: 'WheelOfFortune',
           }}
         />
       </Stack.Navigator>

@@ -177,7 +177,7 @@ const Home = ({navigation}) => {
       </>
     );
   };
-  const GameListCustom = ({item, index}) => {
+  const GameListCustom = ({item, index, navigateTo}) => {
     return (
       <>
         {/* Main Cointainer */}
@@ -231,7 +231,8 @@ const Home = ({navigation}) => {
 
             {/* Play container */}
             <TouchableOpacity
-              onPress={() => navigation.navigate('TgrVsElphnt')}
+              // onPress={() => navigation.navigate('TgrVsElphnt')}
+              onPress={navigateTo}
               style={{
                 backgroundColor: 'yellow',
                 paddingVertical: 5,
@@ -290,6 +291,12 @@ const Home = ({navigation}) => {
             <GameListCustom
               item={{game_name: 'Tiger Vs Elephant', game_id: 21}}
               index={3}
+              navigateTo={() => navigation.navigate('TgrVsElphnt')}
+            />
+            <GameListCustom
+              item={{game_name: 'Wheel Of Fortune', game_id: 22}}
+              index={4}
+              navigateTo={() => navigation.navigate('WhlOfFortune')}
             />
           </View>
         </View>
