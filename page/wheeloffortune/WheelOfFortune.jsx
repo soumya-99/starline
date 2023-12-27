@@ -1,4 +1,11 @@
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Image,
+  ImageBackground,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React, {useRef, useState} from 'react';
 
 import {GoGoSpin} from 'react-native-gogo-spin';
@@ -9,16 +16,47 @@ import prizeIm from '../../assets/prize.png';
 import whlIm from '../../assets/whl-2.png';
 import btnIm from '../../assets/btn.png';
 
+import coinR from '../../assets/coin-rem.png';
+import coinB from '../../assets/coin-blu-2-rem.png';
+import coinG from '../../assets/coinG-removebg-preview.png';
+import coinBlk from '../../assets/coinBlk-removebg-preview.png';
+import coinO from '../../assets/coinO-removebg-preview.png';
+
+const buttonArray = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+const coinArray = [
+  {
+    amt: 5,
+    coinImg: coinO,
+  },
+  {
+    amt: 10,
+    coinImg: coinB,
+  },
+  {
+    amt: 15,
+    coinImg: coinR,
+  },
+  {
+    amt: 20,
+    coinImg: coinG,
+  },
+  {
+    amt: 25,
+    coinImg: coinBlk,
+  },
+];
+
 const prize = [
-  {name: 'x999', image: kingIm},
-  {name: 'x10', image: prizeIm},
-  {name: 'x50', image: prizeIm},
-  {name: 'x80', image: prizeIm},
-  {name: 'x100', image: prizeIm},
-  {name: 'x200', image: prizeIm},
-  {name: 'x80', image: prizeIm},
-  {name: 'x100', image: prizeIm},
-  {name: 'x200', image: prizeIm},
+  {name: '9', image: kingIm},
+  {name: '1', image: prizeIm},
+  {name: '2', image: prizeIm},
+  {name: '0', image: prizeIm},
+  {name: '3', image: prizeIm},
+  {name: '8', image: prizeIm},
+  {name: '7', image: prizeIm},
+  {name: '6', image: prizeIm},
+  {name: '5', image: prizeIm},
+  {name: '4', image: prizeIm},
 ];
 const SIZE = 300;
 const WheelOfFortune = () => {
@@ -33,11 +71,10 @@ const WheelOfFortune = () => {
     console.log('endSuccess', endSuccess);
   };
 
-  const addItem = () => {
-    
-  }
+  const addItem = () => {};
 
   return (
+    // <>
     <View style={styles.container}>
       <View style={styles.rowContainer}>
         <Text style={styles.prizeText}>
@@ -73,7 +110,57 @@ const WheelOfFortune = () => {
           <Image source={btnIm} style={styles.spinBtn} />
         </TouchableOpacity>
       </View>
+      <View
+        style={{
+          marginTop: 20,
+        }}>
+        {/* <Text style={{color: 'white'}}>SECTION 1</Text> */}
+        <View
+          style={{
+            width: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <View style={styles.buttonRow}>
+            {buttonArray.map((item, index) => (
+              <TouchableOpacity style={styles.buttonStyle}>
+                <Text style={styles.buttonTextStyle}>{item}</Text>
+                <Text style={{position: 'absolute', top: 75, left: 55}}>
+                  X{index}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </View>
+      <View>
+        <Text
+          style={{
+            color: 'white',
+            textAlign: 'center',
+            fontSize: 20,
+            fontWeight: '800',
+          }}>
+          TOTAL AMOUNT: 2000
+        </Text>
+      </View>
+      <View
+        style={{
+          marginLeft: 35,
+          marginTop: 20,
+        }}>
+        <View style={styles.buttonRow}>
+          {coinArray.map((item, index) => (
+            <TouchableOpacity style={styles.coinButtonStyle} onPress={() => {}}>
+              <ImageBackground source={item.coinImg} style={styles.coinButton}>
+                <Text style={styles.coinText}>{item.amt}</Text>
+              </ImageBackground>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
     </View>
+    // </>
   );
 };
 const styles = StyleSheet.create({
@@ -111,5 +198,47 @@ const styles = StyleSheet.create({
   spinBtn: {width: 105, height: 124},
   spinWarp: {position: 'absolute'},
   itemWrap: {width: 40, height: 40},
+
+  buttonTextStyle: {
+    textAlign: 'center',
+    color: '#151201',
+    fontSize: 40,
+  },
+  buttonStyle: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 100,
+    width: 83,
+    backgroundColor: '#FDFD96',
+    borderColor: '#FDA172',
+    borderWidth: 2,
+  },
+  buttonRow: {
+    width: '90%',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 3,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  coinButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 50,
+    height: 50,
+  },
+  coinText: {
+    fontWeight: '800',
+    fontSize: 20,
+    color: 'white',
+  },
+  coinButtonStyle: {
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    height: 55,
+    width: 55,
+    backgroundColor: 'transparent',
+  },
 });
+
 export default WheelOfFortune;
