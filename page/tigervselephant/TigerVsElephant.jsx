@@ -19,9 +19,9 @@ import coinB from '../../assets/coin-blu-2-rem.png';
 import tgrVsEle from '../../assets/tgr-vs-ele.jpg';
 import Banner from '../../component/banner/Banner';
 
-// const ANGLE = 10;
-const TIME = 350;
-const EASING = Easing.linear;
+const ANGLE = 10;
+const TIME = 100;
+const EASING = Easing.ease;
 
 const ANGLE_2 = 10;
 const TIME_2 = 90;
@@ -31,15 +31,15 @@ export default function TigerVsElephant() {
   const rotation = useSharedValue(0);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{rotateY: `${rotation.value * 180}deg`}],
+    transform: [{rotateY: `${rotation.value * 360}deg`}],
   }));
 
-  useEffect(() => {
-    rotation.value = withRepeat(
-      withTiming(1, {duration: TIME, easing: EASING}),
-      -1,
-    );
-  }, []);
+  // useEffect(() => {
+  //   rotation.value = withRepeat(
+  //     withTiming(1, {duration: TIME, easing: EASING}),
+  //     -1,
+  //   );
+  // }, []);
 
   const rot = useSharedValue(0);
 
@@ -62,6 +62,12 @@ export default function TigerVsElephant() {
       ),
       // go back to 0 at the end
       withTiming(0, {duration: TIME_2 / 2, easing: EASING_2}),
+    );
+
+    rotation.value = withSequence(
+      withTiming(-ANGLE, {duration: TIME, easing: EASING}),
+      withRepeat(withTiming(ANGLE, {duration: TIME, easing: EASING}), 5, true),
+      withTiming(ANGLE, {duration: TIME, easing: EASING}),
     );
   };
 
@@ -98,10 +104,10 @@ export default function TigerVsElephant() {
           style={{
             textAlign: 'center',
             color: 'white',
-            fontSize: 30,
+            fontSize: 25,
             fontWeight: 800,
           }}>
-          Tiger Vs Elephant
+          Tiger 🐅 Vs Elephant 🐘
         </Text>
       </View>
       <View style={styles.container}>
