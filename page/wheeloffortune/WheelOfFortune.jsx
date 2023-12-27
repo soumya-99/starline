@@ -5,7 +5,8 @@ import {GoGoSpin} from 'react-native-gogo-spin';
 
 import kingIm from '../../assets/king.png';
 import prizeIm from '../../assets/prize.png';
-import whlIm from '../../assets/wheel.png';
+// import whlIm from '../../assets/wheel.png';
+import whlIm from '../../assets/whl-2.png';
 import btnIm from '../../assets/btn.png';
 
 const prize = [
@@ -40,7 +41,7 @@ const WheelOfFortune = () => {
       <View style={styles.centerWheel}>
         <GoGoSpin
           onEndSpinCallBack={onEndSpin}
-          notShowDividLine={true}
+          notShowDividLine={false}
           spinDuration={2000}
           spinReverse={true}
           spinTime={3}
