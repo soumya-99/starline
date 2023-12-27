@@ -16,6 +16,9 @@ const prize = [
   {name: 'x80', image: prizeIm},
   {name: 'x100', image: prizeIm},
   {name: 'x200', image: prizeIm},
+  {name: 'x80', image: prizeIm},
+  {name: 'x100', image: prizeIm},
+  {name: 'x200', image: prizeIm},
 ];
 const SIZE = 300;
 const WheelOfFortune = () => {
@@ -29,6 +32,10 @@ const WheelOfFortune = () => {
   const onEndSpin = endSuccess => {
     console.log('endSuccess', endSuccess);
   };
+
+  const addItem = () => {
+    
+  }
 
   return (
     <View style={styles.container}>
