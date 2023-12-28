@@ -124,7 +124,13 @@ const WheelOfFortune = () => {
             {buttonArray.map((item, index) => (
               <TouchableOpacity style={styles.buttonStyle}>
                 <Text style={styles.buttonTextStyle}>{item}</Text>
-                <Text style={{position: 'absolute', top: 75, left: 55}}>
+                <Text
+                  style={{
+                    position: 'absolute',
+                    top: normalize(60),
+                    left: normalize(45),
+                    fontSize: normalize(12),
+                  }}>
                   X{index}
                 </Text>
               </TouchableOpacity>
