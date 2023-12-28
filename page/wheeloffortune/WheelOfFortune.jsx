@@ -23,6 +23,8 @@ import coinBlk from '../../assets/coinBlk-removebg-preview.png';
 import coinO from '../../assets/coinO-removebg-preview.png';
 import normalize from 'react-native-normalize';
 import {ScrollView} from 'react-native-gesture-handler';
+import TitleBar from '../../component/titlebar/TitleBar';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 const buttonArray = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 const coinArray = [
@@ -60,7 +62,7 @@ const prize = [
   {name: '5', image: prizeIm},
   {name: '4', image: prizeIm},
 ];
-const SIZE = 300;
+const SIZE = 270;
 const WheelOfFortune = () => {
   const spinRef = useRef(null);
   const [prizeIdx, setprizeIdx] = useState(-1);
@@ -76,98 +78,105 @@ const WheelOfFortune = () => {
   const addItem = () => {};
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.rowContainer}>
-        <Text style={styles.prizeText}>
-          REWARD: {prizeIdx !== -1 ? prize[prizeIdx]?.name : ''}
-        </Text>
-        <Image source={prize[prizeIdx]?.image} style={styles.itemWrap} />
+    <SafeAreaView style={styles.container}>
+      <View style={{flex: 1}}>
+        <TitleBar />
       </View>
-      <View style={styles.centerWheel}>
-        <GoGoSpin
-          onEndSpinCallBack={onEndSpin}
-          notShowDividLine={false}
-          spinDuration={2000}
-          spinReverse={true}
-          spinTime={3}
-          ref={spinRef}
-          width={SIZE}
-          height={SIZE}
-          radius={SIZE / 2}
-          data={prize}
-          offsetEnable={true}
-          source={whlIm}
-          renderItem={(data, i) => {
-            return (
-              <View key={i} style={styles.itemWrapper}>
-                <Text style={styles.prizeText}>{data.name}</Text>
+      <ScrollView>
+        <View style={styles.rowContainer}>
+          <Text style={styles.prizeText}>
+            REWARD: {prizeIdx !== -1 ? prize[prizeIdx]?.name : ''}
+          </Text>
+          <Image source={prize[prizeIdx]?.image} style={styles.itemWrap} />
+        </View>
+        <View style={styles.centerWheel}>
+          <GoGoSpin
+            onEndSpinCallBack={onEndSpin}
+            notShowDividLine={false}
+            spinDuration={2000}
+            spinReverse={true}
+            spinTime={3}
+            ref={spinRef}
+            width={SIZE}
+            height={SIZE}
+            radius={SIZE / 2}
+            data={prize}
+            offsetEnable={true}
+            source={whlIm}
+            renderItem={(data, i) => {
+              return (
+                <View key={i} style={styles.itemWrapper}>
+                  <Text style={styles.prizeText}>{data.name}</Text>
 
-                <Image source={data.image} style={styles.itemWrap} />
-              </View>
-            );
-          }}
-        />
-        <TouchableOpacity style={styles.spinWarp} onPress={doSpin}>
-          <Image source={btnIm} style={styles.spinBtn} />
-        </TouchableOpacity>
-      </View>
-      <View>
-        {/* <Text style={{color: 'white'}}>SECTION 1</Text> */}
+                  <Image source={data.image} style={styles.itemWrap} />
+                </View>
+              );
+            }}
+          />
+          <TouchableOpacity style={styles.spinWarp} onPress={doSpin}>
+            <Image source={btnIm} style={styles.spinBtn} />
+          </TouchableOpacity>
+        </View>
+        <View>
+          {/* <Text style={{color: 'white'}}>SECTION 1</Text> */}
+          <View
+            style={{
+              width: '100%',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: normalize(30),
+            }}>
+            <View style={styles.buttonRow}>
+              {buttonArray.map((item, index) => (
+                <TouchableOpacity style={styles.buttonStyle} key={index}>
+                  <Text style={styles.buttonTextStyle}>{item}</Text>
+                  <Text
+                    style={{
+                      position: 'absolute',
+                      top: normalize(60),
+                      left: normalize(45),
+                      fontSize: normalize(12),
+                    }}>
+                    X{index}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        </View>
+        <View>
+          <Text
+            style={{
+              color: 'white',
+              textAlign: 'center',
+              fontSize: normalize(20),
+              fontWeight: '800',
+            }}>
+            TOTAL AMOUNT: 2000
+          </Text>
+        </View>
         <View
           style={{
-            width: '100%',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginTop: normalize(30),
+            marginLeft: normalize(35),
+            marginTop: normalize(10),
           }}>
           <View style={styles.buttonRow}>
-            {buttonArray.map((item, index) => (
-              <TouchableOpacity style={styles.buttonStyle} key={index}>
-                <Text style={styles.buttonTextStyle}>{item}</Text>
-                <Text
-                  style={{
-                    position: 'absolute',
-                    top: normalize(60),
-                    left: normalize(45),
-                    fontSize: normalize(12),
-                  }}>
-                  X{index}
-                </Text>
+            {coinArray.map((item, index) => (
+              <TouchableOpacity
+                style={styles.coinButtonStyle}
+                onPress={() => {}}
+                key={index}>
+                <ImageBackground
+                  source={item.coinImg}
+                  style={styles.coinButton}>
+                  <Text style={styles.coinText}>{item.amt}</Text>
+                </ImageBackground>
               </TouchableOpacity>
             ))}
           </View>
         </View>
-      </View>
-      <View>
-        <Text
-          style={{
-            color: 'white',
-            textAlign: 'center',
-            fontSize: normalize(20),
-            fontWeight: '800',
-          }}>
-          TOTAL AMOUNT: 2000
-        </Text>
-      </View>
-      <View
-        style={{
-          marginLeft: normalize(35),
-          marginTop: normalize(20),
-        }}>
-        <View style={styles.buttonRow}>
-          {coinArray.map((item, index) => (
-            <TouchableOpacity
-              style={styles.coinButtonStyle}
-              onPress={() => {}}
-              key={index}>
-              <ImageBackground source={item.coinImg} style={styles.coinButton}>
-                <Text style={styles.coinText}>{item.amt}</Text>
-              </ImageBackground>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 const styles = StyleSheet.create({

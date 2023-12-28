@@ -6,7 +6,6 @@ import Animated, {
   useAnimatedStyle,
   withRepeat,
   withSequence,
-  Keyframe,
 } from 'react-native-reanimated';
 import {StyleSheet, View, Image, ImageBackground} from 'react-native';
 import {Button, Text} from 'react-native-paper';
@@ -24,6 +23,7 @@ import coinG from '../../assets/coinG-removebg-preview-removebg-preview.png';
 import coinBlk from '../../assets/coinBlk-removebg-preview.png';
 import coinO from '../../assets/coinO-removebg-preview.png';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
+import TitleBar from '../../component/titlebar/TitleBar';
 
 const coinArray = [
   {
@@ -57,25 +57,15 @@ const TIME_2 = 90;
 const EASING_2 = Easing.elastic(1.5);
 
 export default function TigerVsElephant() {
+  // =================== Animation Starts ===================
   const rotation = useSharedValue(0);
-
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{rotateY: `${rotation.value * 360}deg`}],
   }));
-
-  // useEffect(() => {
-  //   rotation.value = withRepeat(
-  //     withTiming(1, {duration: TIME, easing: EASING}),
-  //     -1,
-  //   );
-  // }, []);
-
   const rot = useSharedValue(0);
-
   const animStyle = useAnimatedStyle(() => ({
     transform: [{rotateZ: `${rot.value}deg`}],
   }));
-
   const handlePress = () => {
     rot.value = withSequence(
       // deviate left to start from -ANGLE
@@ -92,25 +82,28 @@ export default function TigerVsElephant() {
       // go back to 0 at the end
       withTiming(0, {duration: TIME_2 / 2, easing: EASING_2}),
     );
-
     rotation.value = withSequence(
       withTiming(-ANGLE, {duration: TIME, easing: EASING}),
       withRepeat(withTiming(ANGLE, {duration: TIME, easing: EASING}), 5, true),
       withTiming(ANGLE, {duration: TIME, easing: EASING}),
     );
   };
-
   const [randomNum1, setRandomNum1] = useState(1);
   const [randomNum2, setRandomNum2] = useState(1);
-
   const generateRandom = () => {
     setRandomNum1(Math.floor(Math.random() * 20));
     setRandomNum2(Math.floor(Math.random() * 20));
   };
+  // =================== Animation Ends ===================
+
+  // const [chipClicked, setChipClicked] = useState(() => false);
 
   return (
     <SafeAreaView style={styles.outerContainer}>
-      <ScrollView style={{marginVertical: 0}}>
+      <View style={{flex: 8}}>
+        <TitleBar />
+      </View>
+      <ScrollView>
         <View style={styles.comp2}>
           <Banner />
         </View>
@@ -118,25 +111,26 @@ export default function TigerVsElephant() {
           <Text style={styles.headerGameText}>Tiger 🐅 Vs Elephant 🐘</Text>
         </View>
         <View style={styles.container}>
-          <Animated.View style={[styles.box, animatedStyle, styles.shadowProp]}>
-            <Image
-              source={tiger}
-              style={{width: 'auto', height: normalize(150)}}
-            />
-          </Animated.View>
-          <Animated.View style={[styles.box, animatedStyle, styles.shadowProp]}>
-            <Image
-              source={elephant}
-              style={{width: 'auto', height: normalize(120)}}
-            />
-          </Animated.View>
+          <TouchableOpacity onPress={() => {}}>
+            <Animated.View
+              style={[styles.box, animatedStyle, styles.shadowProp]}>
+              <Image
+                source={tiger}
+                style={{width: 'auto', height: normalize(150)}}
+              />
+            </Animated.View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => {}}>
+            <Animated.View
+              style={[styles.box, animatedStyle, styles.shadowProp]}>
+              <Image
+                source={elephant}
+                style={{width: 'auto', height: normalize(120)}}
+              />
+            </Animated.View>
+          </TouchableOpacity>
         </View>
-        <View
-          style={{
-            justifyContent: 'space-evenly',
-            alignItems: 'center',
-            flexDirection: 'row',
-          }}>
+        <View style={styles.bigCoinsContainer}>
           <Animated.View style={[animStyle]}>
             <ImageBackground source={coinR} style={styles.bigCoin}>
               <Text style={styles.bigCoinText}>{randomNum1}</Text>
@@ -148,7 +142,9 @@ export default function TigerVsElephant() {
             </ImageBackground>
           </Animated.View>
         </View>
-        {/* <Text>aslhrfuilarl8sa</Text> */}
+        <View style={styles.scoreContainer}>
+          <Text style={styles.scoreText}>Score: 12353</Text>
+        </View>
         <View style={styles.btnContainer}>
           <Button
             icon="autorenew"
@@ -217,7 +213,7 @@ const styles = StyleSheet.create({
   headerGameText: {
     textAlign: 'center',
     color: 'white',
-    fontSize: 25,
+    fontSize: normalize(25),
     fontWeight: 800,
   },
   box: {
@@ -237,24 +233,31 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
   },
   btnContainer: {
-    padding: normalize(30),
-    width: '100%',
+    padding: normalize(10),
+    width: '90%',
+    alignSelf: 'center',
   },
   comp2: {
     width: '100%',
     height: normalize(100),
   },
   shadowProp: {
-    shadowOffset: {width: 0, height: normalize(14)},
+    shadowOffset: {width: 0, height: 14},
     shadowColor: '#FF0000',
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-    elevation: 20,
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 5,
   },
   image: {
     flex: 1,
     // marginBottom: -60,
     justifyContent: 'center',
+  },
+  bigCoinsContainer: {
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginTop: normalize(-15),
   },
   bigCoin: {
     minHeight: normalize(80),
@@ -263,9 +266,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   bigCoinText: {
-    fontSize: 35,
+    fontSize: normalize(35),
     fontWeight: '800',
     color: 'white',
+  },
+  scoreContainer: {
+    height: normalize(40),
+    width: normalize(200),
+    backgroundColor: 'purple',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 10,
+    alignSelf: 'flex-end',
+    borderTopLeftRadius: 10,
+  },
+  scoreText: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: 'aliceblue',
   },
   buttonRow: {
     width: '90%',
