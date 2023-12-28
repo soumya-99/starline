@@ -11,13 +11,42 @@ import Animated, {
 import {StyleSheet, View, Image, ImageBackground} from 'react-native';
 import {Button, Text} from 'react-native-paper';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import normalize from 'react-native-normalize';
 
 import tiger from '../../assets/tiger.png';
 import elephant from '../../assets/hati_angry.png';
-import coinR from '../../assets/coin-rem.png';
-import coinB from '../../assets/coin-blu-2-rem.png';
 import tgrVsEle from '../../assets/tgr-vs-ele.jpg';
 import Banner from '../../component/banner/Banner';
+
+import coinR from '../../assets/coin-rem.png';
+import coinB from '../../assets/coin-blu-2-rem.png';
+import coinG from '../../assets/coinG-removebg-preview-removebg-preview.png';
+import coinBlk from '../../assets/coinBlk-removebg-preview.png';
+import coinO from '../../assets/coinO-removebg-preview.png';
+import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
+
+const coinArray = [
+  {
+    amt: 5,
+    coinImg: coinO,
+  },
+  {
+    amt: 10,
+    coinImg: coinB,
+  },
+  {
+    amt: 15,
+    coinImg: coinR,
+  },
+  {
+    amt: 20,
+    coinImg: coinG,
+  },
+  {
+    amt: 25,
+    coinImg: coinBlk,
+  },
+];
 
 const ANGLE = 10;
 const TIME = 100;
@@ -80,119 +109,126 @@ export default function TigerVsElephant() {
   };
 
   return (
-    <SafeAreaView
-      style={{
-        backgroundColor: 'yellow',
-        height: '100%',
-        borderWidth: 5,
-        borderStyle: 'dotted',
-        borderColor: 'green',
-      }}>
-      <View style={styles.comp2}>
-        <Banner />
-      </View>
-      <View
-        style={{
-          width: 300,
-          backgroundColor: '#171717',
-          height: 80,
-          justifyContent: 'center',
-          borderBottomRightRadius: 30,
-          borderTopRightRadius: 5,
-        }}>
-        <Text
+    <SafeAreaView style={styles.outerContainer}>
+      <ScrollView style={{marginVertical: 0}}>
+        <View style={styles.comp2}>
+          <Banner />
+        </View>
+        <View style={styles.headerGameTextContainer}>
+          <Text style={styles.headerGameText}>Tiger 🐅 Vs Elephant 🐘</Text>
+        </View>
+        <View style={styles.container}>
+          <Animated.View style={[styles.box, animatedStyle, styles.shadowProp]}>
+            <Image
+              source={tiger}
+              style={{width: 'auto', height: normalize(150)}}
+            />
+          </Animated.View>
+          <Animated.View style={[styles.box, animatedStyle, styles.shadowProp]}>
+            <Image
+              source={elephant}
+              style={{width: 'auto', height: normalize(120)}}
+            />
+          </Animated.View>
+        </View>
+        <View
           style={{
-            textAlign: 'center',
-            color: 'white',
-            fontSize: 25,
-            fontWeight: 800,
+            justifyContent: 'space-evenly',
+            alignItems: 'center',
+            flexDirection: 'row',
           }}>
-          Tiger 🐅 Vs Elephant 🐘
-        </Text>
-      </View>
-      <View style={styles.container}>
-        <Animated.View style={[styles.box, animatedStyle, styles.shadowProp]}>
-          <Image source={tiger} style={{width: 'auto', height: 150}} />
-        </Animated.View>
-        <Animated.View style={[styles.box, animatedStyle, styles.shadowProp]}>
-          <Image source={elephant} style={{width: 'auto', height: 150}} />
-        </Animated.View>
-      </View>
-      <View
-        style={{
-          justifyContent: 'space-evenly',
-          alignItems: 'center',
-          flexDirection: 'row',
-        }}>
-        <Animated.View style={[animStyle]}>
-          <ImageBackground
-            source={coinR}
-            style={{
-              minHeight: 80,
-              minWidth: 80,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <Text style={{fontSize: 35, fontWeight: '800', color: 'white'}}>
-              {randomNum1}
-            </Text>
-          </ImageBackground>
-        </Animated.View>
-        <Animated.View style={[animStyle]}>
-          <ImageBackground
-            source={coinB}
-            style={{
-              minHeight: 80,
-              minWidth: 80,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <Text style={{fontSize: 35, fontWeight: '800', color: 'white'}}>
-              {randomNum2}
-            </Text>
-          </ImageBackground>
-        </Animated.View>
-      </View>
-      {/* <Text>aslhrfuilarl8sa</Text> */}
-      <View style={styles.btnContainer}>
-        <Button
-          icon="autorenew"
-          mode="contained"
-          onPress={() => {
-            generateRandom();
-            handlePress();
-          }}
-          buttonColor="orange"
-          textColor="black">
-          START GAME
-        </Button>
-      </View>
-      {/* <ImageBackground
+          <Animated.View style={[animStyle]}>
+            <ImageBackground source={coinR} style={styles.bigCoin}>
+              <Text style={styles.bigCoinText}>{randomNum1}</Text>
+            </ImageBackground>
+          </Animated.View>
+          <Animated.View style={[animStyle]}>
+            <ImageBackground source={coinB} style={styles.bigCoin}>
+              <Text style={styles.bigCoinText}>{randomNum2}</Text>
+            </ImageBackground>
+          </Animated.View>
+        </View>
+        {/* <Text>aslhrfuilarl8sa</Text> */}
+        <View style={styles.btnContainer}>
+          <Button
+            icon="autorenew"
+            mode="contained"
+            onPress={() => {
+              generateRandom();
+              handlePress();
+            }}
+            buttonColor="orange"
+            textColor="black">
+            START GAME
+          </Button>
+        </View>
+        <View
+          style={{
+            marginLeft: normalize(35),
+          }}>
+          <View style={styles.buttonRow}>
+            {coinArray.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.coinButtonStyle}
+                onPress={() => {}}>
+                <ImageBackground
+                  source={item.coinImg}
+                  style={styles.coinButton}>
+                  <Text style={styles.coinText}>{item.amt}</Text>
+                </ImageBackground>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+        {/* <ImageBackground
         source={tgrVsEle}
         resizeMode="cover"
         style={styles.image}></ImageBackground> */}
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  outerContainer: {
+    backgroundColor: 'yellow',
+    height: '100%',
+    borderWidth: normalize(5),
+    borderStyle: 'dotted',
+    borderColor: 'green',
+  },
   container: {
-    padding: 30,
+    padding: normalize(30),
     backgroundColor: '#0e0e0e0',
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-evenly',
     // height: '100%',
   },
+  headerGameTextContainer: {
+    width: normalize(300),
+    backgroundColor: '#171717',
+    height: normalize(80),
+    justifyContent: 'center',
+    borderBottomRightRadius: normalize(30),
+    borderTopRightRadius: normalize(5),
+  },
+  headerGameText: {
+    textAlign: 'center',
+    color: 'white',
+    fontSize: 25,
+    fontWeight: 800,
+  },
   box: {
     justifyContent: 'center',
-    margin: 10,
-    height: 150,
-    width: 150,
+    margin: normalize(10),
+    height: normalize(150),
+    width: normalize(150),
     backgroundColor: 'blue',
     borderColor: 'dodgerblue',
-    borderWidth: 10,
-    borderRadius: 20,
+    borderWidth: normalize(10),
+    borderRadius: normalize(20),
   },
   shadowProp: {
     shadowOffset: {width: -2, height: 4},
@@ -201,15 +237,15 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
   },
   btnContainer: {
-    padding: 50,
+    padding: normalize(30),
     width: '100%',
   },
   comp2: {
     width: '100%',
-    height: 100,
+    height: normalize(100),
   },
   shadowProp: {
-    shadowOffset: {width: 0, height: 14},
+    shadowOffset: {width: 0, height: normalize(14)},
     shadowColor: '#FF0000',
     shadowOpacity: 0.5,
     shadowRadius: 5,
@@ -219,5 +255,42 @@ const styles = StyleSheet.create({
     flex: 1,
     // marginBottom: -60,
     justifyContent: 'center',
+  },
+  bigCoin: {
+    minHeight: normalize(80),
+    minWidth: normalize(80),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bigCoinText: {
+    fontSize: 35,
+    fontWeight: '800',
+    color: 'white',
+  },
+  buttonRow: {
+    width: '90%',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 3,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  coinButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: normalize(50),
+    height: normalize(50),
+  },
+  coinText: {
+    fontWeight: '800',
+    fontSize: normalize(20),
+    color: 'white',
+  },
+  coinButtonStyle: {
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    height: normalize(55),
+    width: normalize(55),
+    backgroundColor: 'transparent',
   },
 });

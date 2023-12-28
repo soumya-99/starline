@@ -18,7 +18,7 @@ import btnIm from '../../assets/btn.png';
 
 import coinR from '../../assets/coin-rem.png';
 import coinB from '../../assets/coin-blu-2-rem.png';
-import coinG from '../../assets/coinG-removebg-preview.png';
+import coinG from '../../assets/coinG-removebg-preview-removebg-preview.png';
 import coinBlk from '../../assets/coinBlk-removebg-preview.png';
 import coinO from '../../assets/coinO-removebg-preview.png';
 import normalize from 'react-native-normalize';
@@ -122,7 +122,7 @@ const WheelOfFortune = () => {
           }}>
           <View style={styles.buttonRow}>
             {buttonArray.map((item, index) => (
-              <TouchableOpacity style={styles.buttonStyle}>
+              <TouchableOpacity style={styles.buttonStyle} key={index}>
                 <Text style={styles.buttonTextStyle}>{item}</Text>
                 <Text
                   style={{
@@ -156,7 +156,10 @@ const WheelOfFortune = () => {
         }}>
         <View style={styles.buttonRow}>
           {coinArray.map((item, index) => (
-            <TouchableOpacity style={styles.coinButtonStyle} onPress={() => {}}>
+            <TouchableOpacity
+              style={styles.coinButtonStyle}
+              onPress={() => {}}
+              key={index}>
               <ImageBackground source={item.coinImg} style={styles.coinButton}>
                 <Text style={styles.coinText}>{item.amt}</Text>
               </ImageBackground>
