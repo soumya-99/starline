@@ -21,6 +21,7 @@ import coinB from '../../assets/coin-blu-2-rem.png';
 import coinG from '../../assets/coinG-removebg-preview.png';
 import coinBlk from '../../assets/coinBlk-removebg-preview.png';
 import coinO from '../../assets/coinO-removebg-preview.png';
+import normalize from 'react-native-normalize';
 
 const buttonArray = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 const coinArray = [
@@ -110,10 +111,7 @@ const WheelOfFortune = () => {
           <Image source={btnIm} style={styles.spinBtn} />
         </TouchableOpacity>
       </View>
-      <View
-        style={{
-          marginTop: 20,
-        }}>
+      <View>
         {/* <Text style={{color: 'white'}}>SECTION 1</Text> */}
         <View
           style={{
@@ -138,7 +136,7 @@ const WheelOfFortune = () => {
           style={{
             color: 'white',
             textAlign: 'center',
-            fontSize: 20,
+            fontSize: normalize(20),
             fontWeight: '800',
           }}>
           TOTAL AMOUNT: 2000
@@ -146,8 +144,8 @@ const WheelOfFortune = () => {
       </View>
       <View
         style={{
-          marginLeft: 35,
-          marginTop: 20,
+          marginLeft: normalize(35),
+          marginTop: normalize(20),
         }}>
         <View style={styles.buttonRow}>
           {coinArray.map((item, index) => (
@@ -169,7 +167,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
   },
   startText: {
-    fontSize: 14,
+    fontSize: normalize(14),
     color: '#000',
     fontWeight: 'bold',
   },
@@ -177,16 +175,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'center',
-    marginVertical: 20,
+    marginVertical: normalize(5),
   },
   prizeText: {
     color: '#fff',
-    fontSize: 20,
+    fontSize: normalize(20),
     fontWeight: 'bold',
   },
   centerWheel: {
-    width: SIZE,
-    height: SIZE,
+    width: normalize(260),
+    height: normalize(260),
     alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center',
@@ -195,20 +193,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  spinBtn: {width: 105, height: 124},
+  spinBtn: {width: normalize(105), height: normalize(124)},
   spinWarp: {position: 'absolute'},
-  itemWrap: {width: 40, height: 40},
+  itemWrap: {width: normalize(40), height: normalize(40)},
 
   buttonTextStyle: {
     textAlign: 'center',
     color: '#151201',
-    fontSize: 40,
+    fontSize: normalize(40),
   },
   buttonStyle: {
     justifyContent: 'center',
     alignItems: 'center',
-    height: 100,
-    width: 83,
+    height: normalize(80),
+    width: normalize(66),
     backgroundColor: '#FDFD96',
     borderColor: '#FDA172',
     borderWidth: 2,
@@ -217,26 +215,26 @@ const styles = StyleSheet.create({
     width: '90%',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 3,
+    gap: 4,
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   coinButton: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: 50,
-    height: 50,
+    width: normalize(50),
+    height: normalize(50),
   },
   coinText: {
     fontWeight: '800',
-    fontSize: 20,
+    fontSize: normalize(20),
     color: 'white',
   },
   coinButtonStyle: {
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
-    height: 55,
-    width: 55,
+    height: normalize(55),
+    width: normalize(55),
     backgroundColor: 'transparent',
   },
 });
