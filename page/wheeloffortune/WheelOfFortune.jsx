@@ -22,6 +22,7 @@ import coinG from '../../assets/coinG-removebg-preview.png';
 import coinBlk from '../../assets/coinBlk-removebg-preview.png';
 import coinO from '../../assets/coinO-removebg-preview.png';
 import normalize from 'react-native-normalize';
+import {ScrollView} from 'react-native-gesture-handler';
 
 const buttonArray = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 const coinArray = [
@@ -75,8 +76,7 @@ const WheelOfFortune = () => {
   const addItem = () => {};
 
   return (
-    // <>
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.rowContainer}>
         <Text style={styles.prizeText}>
           REWARD: {prizeIdx !== -1 ? prize[prizeIdx]?.name : ''}
@@ -118,6 +118,7 @@ const WheelOfFortune = () => {
             width: '100%',
             justifyContent: 'center',
             alignItems: 'center',
+            marginTop: normalize(30),
           }}>
           <View style={styles.buttonRow}>
             {buttonArray.map((item, index) => (
@@ -157,8 +158,7 @@ const WheelOfFortune = () => {
           ))}
         </View>
       </View>
-    </View>
-    // </>
+    </ScrollView>
   );
 };
 const styles = StyleSheet.create({
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'center',
-    marginVertical: normalize(5),
+    marginVertical: normalize(10),
   },
   prizeText: {
     color: '#fff',
@@ -183,8 +183,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   centerWheel: {
-    width: normalize(260),
-    height: normalize(260),
+    width: normalize(SIZE),
+    height: normalize(SIZE),
     alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center',
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
     width: '90%',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 4,
+    gap: 3,
     justifyContent: 'space-between',
     alignItems: 'center',
   },
