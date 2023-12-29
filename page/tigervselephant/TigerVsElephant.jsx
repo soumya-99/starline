@@ -52,7 +52,7 @@ const ANGLE = 10;
 const TIME = 100;
 const EASING = Easing.ease;
 
-const ANGLE_2 = 10;
+const ANGLE_2 = 20;
 const TIME_2 = 90;
 const EASING_2 = Easing.elastic(1.5);
 
@@ -66,7 +66,10 @@ export default function TigerVsElephant() {
   const animStyle = useAnimatedStyle(() => ({
     transform: [{rotateZ: `${rot.value}deg`}],
   }));
-  const handlePress = () => {
+
+  const handlePress = async () => {
+    // setTigerState(true);
+    // setElephantState(true);
     rot.value = withSequence(
       // deviate left to start from -ANGLE
       withTiming(-ANGLE_2, {duration: TIME_2 / 2, easing: EASING_2}),
@@ -87,23 +90,38 @@ export default function TigerVsElephant() {
       withRepeat(withTiming(ANGLE, {duration: TIME, easing: EASING}), 5, true),
       withTiming(ANGLE, {duration: TIME, easing: EASING}),
     );
+    setTimeout(() => {
+      generateRandom();
+    }, 100);
   };
   const [randomNum1, setRandomNum1] = useState(1);
   const [randomNum2, setRandomNum2] = useState(1);
+  // const [tigerState, setTigerState] = useState(true);
+  // const [elephantState, setElephantState] = useState(true);
   const generateRandom = () => {
     setRandomNum1(Math.floor(Math.random() * 20));
     setRandomNum2(Math.floor(Math.random() * 20));
+
+    // setTigerState(randomNum1 > randomNum2);
+    // setElephantState(randomNum1 < randomNum2);
+
+    // setTimeout(() => {
+    //   setTigerState(true);
+    //   setElephantState(true);
+    // }, 30000);
   };
   // =================== Animation Ends ===================
-
-  // const [chipClicked, setChipClicked] = useState(() => false);
-
   return (
     <SafeAreaView style={styles.outerContainer}>
-      <View style={{flex: 8}}>
+      <View style={{flex: 3}}>
         <TitleBar />
       </View>
-      <ScrollView>
+      <ScrollView
+        style={{
+          borderWidth: normalize(5),
+          borderStyle: 'dotted',
+          borderColor: 'green',
+        }}>
         <View style={styles.comp2}>
           <Banner />
         </View>
@@ -115,7 +133,7 @@ export default function TigerVsElephant() {
             <Animated.View
               style={[styles.box, animatedStyle, styles.shadowProp]}>
               <Image
-                source={tiger}
+                source={randomNum1 > randomNum2 && tiger}
                 style={{width: 'auto', height: normalize(150)}}
               />
             </Animated.View>
@@ -124,7 +142,7 @@ export default function TigerVsElephant() {
             <Animated.View
               style={[styles.box, animatedStyle, styles.shadowProp]}>
               <Image
-                source={elephant}
+                source={randomNum1 < randomNum2 && elephant}
                 style={{width: 'auto', height: normalize(120)}}
               />
             </Animated.View>
@@ -150,7 +168,6 @@ export default function TigerVsElephant() {
             icon="autorenew"
             mode="contained"
             onPress={() => {
-              generateRandom();
               handlePress();
             }}
             buttonColor="orange"
@@ -190,9 +207,6 @@ const styles = StyleSheet.create({
   outerContainer: {
     backgroundColor: 'yellow',
     height: '100%',
-    borderWidth: normalize(5),
-    borderStyle: 'dotted',
-    borderColor: 'green',
   },
   container: {
     padding: normalize(30),
@@ -205,7 +219,7 @@ const styles = StyleSheet.create({
   headerGameTextContainer: {
     width: normalize(300),
     backgroundColor: '#171717',
-    height: normalize(80),
+    height: normalize(60),
     justifyContent: 'center',
     borderBottomRightRadius: normalize(30),
     borderTopRightRadius: normalize(5),
@@ -240,13 +254,6 @@ const styles = StyleSheet.create({
   comp2: {
     width: '100%',
     height: normalize(100),
-  },
-  shadowProp: {
-    shadowOffset: {width: 0, height: 14},
-    shadowColor: '#FF0000',
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    elevation: 5,
   },
   image: {
     flex: 1,

@@ -136,6 +136,7 @@ const WheelOfFortune = () => {
                       top: normalize(60),
                       left: normalize(45),
                       fontSize: normalize(12),
+                      color: 'black',
                     }}>
                     X{index}
                   </Text>
