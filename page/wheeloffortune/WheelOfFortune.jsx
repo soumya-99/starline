@@ -37,15 +37,15 @@ const coinArray = [
     coinImg: coinB,
   },
   {
-    amt: 15,
+    amt: 50,
     coinImg: coinR,
   },
   {
-    amt: 20,
+    amt: 100,
     coinImg: coinG,
   },
   {
-    amt: 25,
+    amt: 500,
     coinImg: coinBlk,
   },
 ];
@@ -138,7 +138,7 @@ const WheelOfFortune = () => {
                       fontSize: normalize(12),
                       color: 'black',
                     }}>
-                    X{index}
+                    X{9}
                   </Text>
                 </TouchableOpacity>
               ))}

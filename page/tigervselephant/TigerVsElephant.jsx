@@ -35,15 +35,15 @@ const coinArray = [
     coinImg: coinB,
   },
   {
-    amt: 15,
+    amt: 50,
     coinImg: coinR,
   },
   {
-    amt: 20,
+    amt: 100,
     coinImg: coinG,
   },
   {
-    amt: 25,
+    amt: 500,
     coinImg: coinBlk,
   },
 ];
