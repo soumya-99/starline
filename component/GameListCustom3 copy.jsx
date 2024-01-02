@@ -2,16 +2,24 @@ import {View, Text, Image, TouchableOpacity} from 'react-native';
 import React from 'react';
 import normalize from 'react-native-normalize';
 
-export default function GameListCustom2({
+export default function GameListCustom3({
   item,
   index,
   navigateTo,
   bgColor = 'rgba(255, 255, 255, 0.2)',
   textColor = 'rgba(0, 0, 0, 1)',
   img,
+  navigation,
 }) {
   return (
-    <TouchableOpacity onPress={navigateTo} style={{width: '100%'}}>
+    <TouchableOpacity
+      onPress={() =>
+        navigation.navigate('GameTime', {
+          game_id: item.game_id,
+          game_name: item.game_name,
+        })
+      }
+      style={{width: '100%'}}>
       <View
         style={{
           backgroundColor: bgColor,

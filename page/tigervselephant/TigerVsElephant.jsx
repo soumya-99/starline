@@ -211,8 +211,8 @@ export default function TigerVsElephant() {
       <ScrollView
         style={{
           borderWidth: normalize(5),
-          borderStyle: 'dotted',
-          borderColor: 'green',
+          borderStyle: 'dashed',
+          borderColor: 'purple',
         }}>
         <View style={styles.comp2}>
           <Banner />
@@ -298,7 +298,7 @@ export default function TigerVsElephant() {
 
 const styles = StyleSheet.create({
   outerContainer: {
-    backgroundColor: 'yellow',
+    backgroundColor: 'lavender',
     height: '100%',
   },
   container: {
@@ -313,6 +313,8 @@ const styles = StyleSheet.create({
     width: normalize(300),
     backgroundColor: '#171717',
     height: normalize(60),
+    marginBottom: normalize(-10),
+    marginTop: normalize(-5),
     justifyContent: 'center',
     borderBottomRightRadius: normalize(30),
     borderTopRightRadius: normalize(5),

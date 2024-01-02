@@ -250,6 +250,73 @@ const Home = ({navigation}) => {
       </>
     );
   };
+  const GameListCustom3 = ({
+    item,
+    index,
+    bgColor = 'rgba(255, 255, 255, 0.2)',
+    textColor = 'rgba(0, 0, 0, 1)',
+    img,
+  }) => {
+    return (
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate('GameTime', {
+            game_id: item.game_id,
+            game_name: item.game_name,
+          })
+        }
+        style={{width: '100%'}}>
+        <View
+          style={{
+            backgroundColor: bgColor,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            borderRadius: normalize(10),
+            paddingVertical: normalize(35),
+            paddingHorizontal: normalize(5),
+            alignItems: 'center',
+            marginBottom: normalize(10),
+            marginTop: normalize(10),
+            marginLeft: normalize(10),
+            shadowColor: '#000',
+            shadowOffset: {
+              width: 0,
+              height: 4,
+            },
+            shadowOpacity: 0.32,
+            shadowRadius: 5.46,
+
+            elevation: 9,
+          }}>
+          <View
+            style={{
+              position: 'absolute',
+              height: normalize(100),
+              width: normalize(100),
+              padding: normalize(5),
+            }}>
+            <Image
+              source={img}
+              style={{width: '100%', height: '100%'}}
+              resizeMode="cover"
+            />
+          </View>
+          <Text
+            style={{
+              fontSize: normalize(23),
+              fontWeight: '900',
+              color: textColor,
+              left: normalize(80),
+              maxWidth: '70%',
+              textAlign: 'center',
+              width: '70%',
+            }}>
+            {item.game_name}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   useEffect(() => {
     if (!userInfo) {
@@ -282,25 +349,7 @@ const Home = ({navigation}) => {
           </View>
         </View>
         <View style={styles.list_container2}>
-          <View style={styles.list_sub_container}>
-            {/* <FlatList
-              data={gameNameList}
-              keyExtractor={item => item.game_id}
-              renderItem={({item, index}) => (
-                <GameListTwo item={item} index={index} />
-              )}
-            /> */}
-
-            {/* <GameListCustom
-              item={{game_name: 'Tiger Vs Elephant', game_id: 21}}
-              index={3}
-              navigateTo={() => navigation.navigate('TgrVsElphnt')}
-            />
-            <GameListCustom
-              item={{game_name: 'Wheel Of Fortune', game_id: 22}}
-              index={4}
-              navigateTo={() => navigation.navigate('WhlOfFortune')}
-            /> */}
+          <ScrollView>
             <GameListCustom2
               item={{game_name: 'Super Spin', game_id: 35}}
               index={5}
@@ -317,15 +366,40 @@ const Home = ({navigation}) => {
               textColor="#ffd8e8"
               img={logoFF}
             />
-            <GameListCustom2
+            {/* <GameListCustom2
               item={{game_name: 'Kolkata Fatafat', game_id: 37}}
               index={7}
               navigateTo={() => navigation.navigate('WhlOfFortune')}
               bgColor="#444444"
               textColor="yellow"
               img={logoFF}
+            /> */}
+            <FlatList
+              data={gameNameList}
+              keyExtractor={item => item.game_id}
+              renderItem={({item, index}) => (
+                // <GameListTwo item={item} index={index} />
+                <GameListCustom3
+                  item={item}
+                  index={index}
+                  bgColor="#444444"
+                  textColor="yellow"
+                  img={logoFF}
+                />
+              )}
             />
-          </View>
+
+            {/* <GameListCustom
+              item={{game_name: 'Tiger Vs Elephant', game_id: 21}}
+              index={3}
+              navigateTo={() => navigation.navigate('TgrVsElphnt')}
+            />
+            <GameListCustom
+              item={{game_name: 'Wheel Of Fortune', game_id: 22}}
+              index={4}
+              navigateTo={() => navigation.navigate('WhlOfFortune')}
+            /> */}
+          </ScrollView>
         </View>
       </View>
     </View>
