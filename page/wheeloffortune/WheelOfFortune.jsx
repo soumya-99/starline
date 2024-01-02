@@ -6,9 +6,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 
 import {GoGoSpin} from 'react-native-gogo-spin';
+import Sound from 'react-native-sound';
 
 import kingIm from '../../assets/king.png';
 import prizeIm from '../../assets/prize.png';
@@ -62,20 +63,50 @@ const prize = [
   {name: '5', image: prizeIm},
   {name: '4', image: prizeIm},
 ];
+
 const SIZE = 270;
 const WheelOfFortune = () => {
   const spinRef = useRef(null);
   const [prizeIdx, setprizeIdx] = useState(-1);
+
+  // Enable playback in silence mode
+  Sound.setCategory('Playback');
+
+  // Load the sound file 'whoosh.mp3' from the app bundle
+  // See notes below about preloading sounds within initialization code below.
+  var whoosh = new Sound('whl2.mp3', Sound.MAIN_BUNDLE, error => {
+    if (error) {
+      console.log('failed to load the sound', error);
+      return;
+    }
+    // loaded successfully
+    console.log(
+      'duration in seconds: ' +
+        whoosh.getDuration() +
+        'number of channels: ' +
+        whoosh.getNumberOfChannels(),
+    );
+
+    // Play the sound with an onEnd callback
+  });
+
   const doSpin = () => {
     const getIdx = Math.floor(Math.random() * prize.length);
     setprizeIdx(getIdx);
     spinRef?.current?.doSpinAnimate(getIdx);
+
+    // whoosh.play();
+    whoosh.play(success => {
+      if (success) {
+        console.log('successfully finished playing');
+      } else {
+        console.log('playback failed due to audio decoding errors');
+      }
+    });
   };
   const onEndSpin = endSuccess => {
     console.log('endSuccess', endSuccess);
   };
-
-  const addItem = () => {};
 
   return (
     <SafeAreaView style={styles.container}>
@@ -93,9 +124,9 @@ const WheelOfFortune = () => {
           <GoGoSpin
             onEndSpinCallBack={onEndSpin}
             notShowDividLine={false}
-            spinDuration={2000}
+            spinDuration={15000}
             spinReverse={true}
-            spinTime={3}
+            spinTime={15}
             ref={spinRef}
             width={SIZE}
             height={SIZE}

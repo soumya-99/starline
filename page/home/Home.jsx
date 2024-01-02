@@ -27,6 +27,9 @@ import Banner from '../../component/banner/Banner';
 import OfferText from '../../component/offerText/OfferText';
 import {useIsFocused} from '@react-navigation/native';
 import {Button} from 'react-native-paper';
+import GameListCustom2 from '../../component/GameListCustom2';
+import logoFF from '../../assets/kolkataff-removebg-preview.png';
+import logoWOF from '../../assets/whloffortun-2-removebg-preview.png';
 
 const Home = ({navigation}) => {
   const isFocused = useIsFocused();
@@ -288,7 +291,7 @@ const Home = ({navigation}) => {
               )}
             /> */}
 
-            <GameListCustom
+            {/* <GameListCustom
               item={{game_name: 'Tiger Vs Elephant', game_id: 21}}
               index={3}
               navigateTo={() => navigation.navigate('TgrVsElphnt')}
@@ -297,6 +300,30 @@ const Home = ({navigation}) => {
               item={{game_name: 'Wheel Of Fortune', game_id: 22}}
               index={4}
               navigateTo={() => navigation.navigate('WhlOfFortune')}
+            /> */}
+            <GameListCustom2
+              item={{game_name: 'Super Spin', game_id: 35}}
+              index={5}
+              navigateTo={() => navigation.navigate('WhlOfFortune')}
+              bgColor="#fabc3d"
+              textColor="#422c00"
+              img={logoWOF}
+            />
+            <GameListCustom2
+              item={{game_name: 'Elephant Vs Tiger', game_id: 36}}
+              index={6}
+              navigateTo={() => navigation.navigate('TgrVsElphnt')}
+              bgColor="#3d0024"
+              textColor="#ffd8e8"
+              img={logoFF}
+            />
+            <GameListCustom2
+              item={{game_name: 'Kolkata Fatafat', game_id: 37}}
+              index={7}
+              navigateTo={() => navigation.navigate('WhlOfFortune')}
+              bgColor="#444444"
+              textColor="yellow"
+              img={logoFF}
             />
           </View>
         </View>

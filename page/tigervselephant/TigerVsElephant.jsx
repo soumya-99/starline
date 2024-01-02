@@ -11,6 +11,7 @@ import {StyleSheet, View, Image, ImageBackground} from 'react-native';
 import {Button, Text} from 'react-native-paper';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import normalize from 'react-native-normalize';
+import Sound from 'react-native-sound';
 
 import tiger from '../../assets/tiger.png';
 import elephant from '../../assets/hati_angry.png';
@@ -57,6 +58,51 @@ const TIME_2 = 90;
 const EASING_2 = Easing.elastic(1.5);
 
 export default function TigerVsElephant() {
+  var tigrSound = new Sound('tiger1.mp3', Sound.MAIN_BUNDLE, error => {
+    if (error) {
+      console.log('failed to load the sound', error);
+      return;
+    }
+    // loaded successfully
+    console.log(
+      'duration in seconds: ' +
+        tigrSound.getDuration() +
+        'number of channels: ' +
+        tigrSound.getNumberOfChannels(),
+    );
+    // Play the sound with an onEnd callback
+  });
+
+  var eleSound = new Sound('elephant1.mp3', Sound.MAIN_BUNDLE, error => {
+    if (error) {
+      console.log('failed to load the sound', error);
+      return;
+    }
+    // loaded successfully
+    console.log(
+      'duration in seconds: ' +
+        eleSound.getDuration() +
+        'number of channels: ' +
+        eleSound.getNumberOfChannels(),
+    );
+    // Play the sound with an onEnd callback
+  });
+
+  var drawSound = new Sound('draw1.mp3', Sound.MAIN_BUNDLE, error => {
+    if (error) {
+      console.log('failed to load the sound', error);
+      return;
+    }
+    // loaded successfully
+    console.log(
+      'duration in seconds: ' +
+        drawSound.getDuration() +
+        'number of channels: ' +
+        drawSound.getNumberOfChannels(),
+    );
+    // Play the sound with an onEnd callback
+  });
+
   // =================== Animation Starts ===================
   const rotation = useSharedValue(0);
   const animatedStyle = useAnimatedStyle(() => ({
@@ -67,7 +113,9 @@ export default function TigerVsElephant() {
     transform: [{rotateZ: `${rot.value}deg`}],
   }));
 
-  const handlePress = async () => {
+  const [tgrEleState, setTgrEleState] = useState(() => true);
+  const handlePress = () => {
+    setTgrEleState(false);
     // setTigerState(true);
     // setElephantState(true);
     rot.value = withSequence(
@@ -90,9 +138,21 @@ export default function TigerVsElephant() {
       withRepeat(withTiming(ANGLE, {duration: TIME, easing: EASING}), 5, true),
       withTiming(ANGLE, {duration: TIME, easing: EASING}),
     );
-    setTimeout(() => {
-      generateRandom();
-    }, 100);
+    // setTimeout(() => {
+    generateRandom();
+    // }, 100);
+
+    // setTimeout(() => {
+    //   if (randomNum1 > randomNum2) {
+    //     tigrSound.play(success => {
+    //       if (success) {
+    //         console.log('successfully finished playing');
+    //       } else {
+    //         console.log('playback failed due to audio decoding errors');
+    //       }
+    //     });
+    //   }
+    // }, 200);
   };
   const [randomNum1, setRandomNum1] = useState(1);
   const [randomNum2, setRandomNum2] = useState(1);
@@ -111,6 +171,38 @@ export default function TigerVsElephant() {
     // }, 30000);
   };
   // =================== Animation Ends ===================
+
+  console.log('randomNum1111111 > randomNum2222222', randomNum1, randomNum2);
+
+  setTimeout(() => {
+    console.log('randomNum1 > randomNum2', randomNum1, randomNum2);
+    if (randomNum1 > randomNum2) {
+      tigrSound.play(success => {
+        if (success) {
+          console.log('successfully finished playing');
+        } else {
+          console.log('playback failed due to audio decoding errors');
+        }
+      });
+    } else if (randomNum1 < randomNum2) {
+      eleSound.play(success => {
+        if (success) {
+          console.log('successfully finished playing');
+        } else {
+          console.log('playback failed due to audio decoding errors');
+        }
+      });
+    } else {
+      drawSound.play(success => {
+        if (success) {
+          console.log('successfully finished playing');
+        } else {
+          console.log('playback failed due to audio decoding errors');
+        }
+      });
+    }
+  }, 100);
+
   return (
     <SafeAreaView style={styles.outerContainer}>
       <View style={{flex: 3}}>
@@ -133,7 +225,7 @@ export default function TigerVsElephant() {
             <Animated.View
               style={[styles.box, animatedStyle, styles.shadowProp]}>
               <Image
-                source={randomNum1 > randomNum2 && tiger}
+                source={(randomNum1 > randomNum2 || tgrEleState) && tiger}
                 style={{width: 'auto', height: normalize(150)}}
               />
             </Animated.View>
@@ -142,7 +234,7 @@ export default function TigerVsElephant() {
             <Animated.View
               style={[styles.box, animatedStyle, styles.shadowProp]}>
               <Image
-                source={randomNum1 < randomNum2 && elephant}
+                source={(randomNum1 < randomNum2 || tgrEleState) && elephant}
                 style={{width: 'auto', height: normalize(120)}}
               />
             </Animated.View>
@@ -169,6 +261,7 @@ export default function TigerVsElephant() {
             mode="contained"
             onPress={() => {
               handlePress();
+              // console.log('randomNum1 > randomNum2', randomNum1, randomNum2);
             }}
             buttonColor="orange"
             textColor="black">
