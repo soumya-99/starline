@@ -350,7 +350,7 @@ const Home = ({navigation}) => {
         </View>
         <View style={styles.list_container2}>
           <ScrollView>
-            <GameListCustom2
+            {/* <GameListCustom2
               item={{game_name: 'Super Spin', game_id: 35}}
               index={5}
               navigateTo={() => navigation.navigate('WhlOfFortune')}
@@ -365,7 +365,7 @@ const Home = ({navigation}) => {
               bgColor="#3d0024"
               textColor="#ffd8e8"
               img={logoFF}
-            />
+            /> */}
             {/* <GameListCustom2
               item={{game_name: 'Kolkata Fatafat', game_id: 37}}
               index={7}
@@ -377,16 +377,55 @@ const Home = ({navigation}) => {
             <FlatList
               data={gameNameList}
               keyExtractor={item => item.game_id}
-              renderItem={({item, index}) => (
-                // <GameListTwo item={item} index={index} />
-                <GameListCustom3
-                  item={item}
-                  index={index}
-                  bgColor="#444444"
-                  textColor="yellow"
-                  img={logoFF}
-                />
-              )}
+              renderItem={
+                ({item, index}) =>
+                  // <GameListTwo item={item} index={index} />
+                  //console.log('saidlhfoiusadtfglrsadyi', item.game_flag)
+                  item.game_flag == 'TE' ? (
+                    <GameListCustom2
+                      item={item}
+                      index={index}
+                      navigateTo={() =>
+                        navigation.navigate('TgrVsElphnt', {
+                          game_id: item.game_id,
+                        })
+                      }
+                      bgColor="#3d0024"
+                      textColor="#ffd8e8"
+                      img={logoFF}
+                    />
+                  ) : item.game_flag == 'SP' ? (
+                    <GameListCustom2
+                      item={item}
+                      index={index}
+                      navigateTo={() =>
+                        navigation.navigate('WhlOfFortune', {
+                          game_id: item.game_id,
+                          item: item,
+                        })
+                      }
+                      bgColor="#fabc3d"
+                      textColor="#422c00"
+                      img={logoWOF}
+                    />
+                  ) : (
+                    <GameListCustom3
+                      item={item}
+                      index={index}
+                      bgColor="#444444"
+                      textColor="yellow"
+                      img={logoFF}
+                    />
+                  )
+
+                // <GameListCustom3
+                //   item={item}
+                //   index={index}
+                //   bgColor="#444444"
+                //   textColor="yellow"
+                //   img={logoFF}
+                // />
+              }
             />
 
             {/* <GameListCustom

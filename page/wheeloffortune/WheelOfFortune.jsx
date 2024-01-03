@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 
 import {GoGoSpin} from 'react-native-gogo-spin';
 import Sound from 'react-native-sound';
@@ -14,8 +14,10 @@ import Sound from 'react-native-sound';
 import kingIm from '../../assets/king.png';
 import prizeIm from '../../assets/prize.png';
 // import whlIm from '../../assets/wheel.png';
-import whlIm from '../../assets/whl-2.png';
-import btnIm from '../../assets/btn.png';
+// import whlIm from '../../assets/whl-2.png';
+import whlIm from '../../assets/whl-2_work-1.png';
+// import btnIm from '../../assets/btn.png';
+import btnIm from '../../assets/btn-1.png';
 
 import coinR from '../../assets/coin-rem.png';
 import coinB from '../../assets/coin-blu-2-rem.png';
@@ -26,6 +28,11 @@ import normalize from 'react-native-normalize';
 import {ScrollView} from 'react-native-gesture-handler';
 import TitleBar from '../../component/titlebar/TitleBar';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import handleGetGameTime from '../../hooks/controller/Game/handleGetGameTime';
+import {useIsFocused} from '@react-navigation/native';
+import {AuthContext} from '../../src/context/AuthContext';
+import axios from 'axios';
+import {BASE_URL} from '../../src/config';
 
 const buttonArray = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 const coinArray = [
@@ -65,7 +72,8 @@ const prize = [
 ];
 
 const SIZE = 270;
-const WheelOfFortune = () => {
+const WheelOfFortune = ({route}) => {
+  const {userInfo} = useContext(AuthContext);
   const spinRef = useRef(null);
   const [prizeIdx, setprizeIdx] = useState(-1);
 
@@ -108,6 +116,75 @@ const WheelOfFortune = () => {
     console.log('endSuccess', endSuccess);
   };
 
+  const [serverTime, setServerTime] = useState();
+
+  const serverFetchedTime = async () => {
+    try {
+      await axios
+        .get(`${BASE_URL}/server_time`, {
+          headers: {
+            Authorization: `Bearer ${userInfo.token}`,
+          },
+        })
+        .then(res => {
+          setServerTime(res.data.date_time);
+        });
+    } catch (error) {
+      console.log('ERRR', error);
+    }
+  };
+
+  // const {userInfo} = useContext(AuthContext);
+  const isFocused = useIsFocused();
+  const [gameTime, SetGameTime] = useState([]);
+  const {getGameTime} = handleGetGameTime();
+
+  const {game_id, item} = route.params;
+
+  const [currentTime, setCurrentTime] = useState('');
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const date = new Date();
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      const seconds = date.getSeconds().toString().padStart(2, '0');
+      setCurrentTime(`${hours}:${minutes}:${seconds}`);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    getGameTime(game_id, userInfo.token)
+      .then(res => {
+        SetGameTime(res.data.data);
+        console.log('hsdiufyisdutgrgsfrsdgy', res.data.data);
+      })
+      .catch(error => console.error(error));
+  }, [isFocused]);
+  // game_time
+  const findFutureGame = () => {
+    for (let i = 0; i < gameTime?.length; i++) {
+      const checkgameTime = gameTime[i].game_time;
+      // console.log(checkgameTime,currentTime,"\n")
+      if (checkgameTime > currentTime) {
+        return gameTime[i].game_id;
+      }
+    }
+    return null; // Return null if no future game is found
+  };
+
+  useEffect(() => {
+    serverFetchedTime();
+  }, []);
+
+  console.log('qwertyuioppadjdsafskdgsufgvbs', serverTime);
+  const futureGame = findFutureGame();
+  console.log('qwertyuioppadjdsafskdgsufgvbsdsarfsedfrgtr', futureGame);
+  const isLive = futureGame != null && futureGame == item.game_id;
+  console.log('isLive', isLive);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={{flex: 1}}>
@@ -118,12 +195,12 @@ const WheelOfFortune = () => {
           <Text style={styles.prizeText}>
             REWARD: {prizeIdx !== -1 ? prize[prizeIdx]?.name : ''}
           </Text>
-          <Image source={prize[prizeIdx]?.image} style={styles.itemWrap} />
+          {/* <Image source={prize[prizeIdx]?.image} style={styles.itemWrap} /> */}
         </View>
         <View style={styles.centerWheel}>
           <GoGoSpin
             onEndSpinCallBack={onEndSpin}
-            notShowDividLine={false}
+            notShowDividLine={true}
             spinDuration={15000}
             spinReverse={true}
             spinTime={15}
@@ -139,12 +216,14 @@ const WheelOfFortune = () => {
                 <View key={i} style={styles.itemWrapper}>
                   <Text style={styles.prizeText}>{data.name}</Text>
 
-                  <Image source={data.image} style={styles.itemWrap} />
+                  {/* <Image source={data.image} style={styles.itemWrap} /> */}
                 </View>
               );
             }}
           />
-          <TouchableOpacity style={styles.spinWarp} onPress={doSpin}>
+          <TouchableOpacity
+            style={styles.spinWarp}
+            onPress={() => isLive && doSpin()}>
             <Image source={btnIm} style={styles.spinBtn} />
           </TouchableOpacity>
         </View>
