@@ -92,7 +92,7 @@ const TitleBar = () => {
                     <Ionicons name="wallet" size={30} color="#ffff" />
                 </View> */}
         <View style={styles.rupeeicon}>
-          <Text style={styles.rupeeicon_content}>৳ {wlBal}</Text>
+          <Text style={styles.rupeeicon_content}>Coin {wlBal}</Text>
         </View>
       </View>
     </View>

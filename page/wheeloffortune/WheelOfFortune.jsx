@@ -1,8 +1,10 @@
 import {
+  Alert,
   Image,
   ImageBackground,
   StyleSheet,
   Text,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -79,11 +81,19 @@ const WheelOfFortune = ({route}) => {
   const spinRef = useRef(null);
   const [prizeIdx, setprizeIdx] = useState(-1);
 
+  const isFocused = useIsFocused();
+  const [gameTime, setGameTime] = useState([]);
+  const {getGameTime} = handleGetGameTime();
+  const {game_id, item} = route.params;
+
+  const [currentTime, setCurrentTime] = useState('');
+
+  const [coinAmount, setCoinAmount] = useState(null);
+  const [entryNumber, setEntryNumber] = useState(null);
+
   // Enable playback in silence mode
   Sound.setCategory('Playback');
 
-  // Load the sound file 'whoosh.mp3' from the app bundle
-  // See notes below about preloading sounds within initialization code below.
   var whoosh = new Sound('whl2.mp3', Sound.MAIN_BUNDLE, error => {
     if (error) {
       console.log('failed to load the sound', error);
@@ -96,8 +106,6 @@ const WheelOfFortune = ({route}) => {
         'number of channels: ' +
         whoosh.getNumberOfChannels(),
     );
-
-    // Play the sound with an onEnd callback
   });
 
   const doSpin = () => {
@@ -136,26 +144,6 @@ const WheelOfFortune = ({route}) => {
     }
   };
 
-  const isFocused = useIsFocused();
-  const [gameTime, setGameTime] = useState([]);
-  const {getGameTime} = handleGetGameTime();
-
-  const {game_id, item} = route.params;
-
-  const [currentTime, setCurrentTime] = useState('');
-
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     const date = new Date();
-  //     const hours = date.getHours().toString().padStart(2, '0');
-  //     const minutes = date.getMinutes().toString().padStart(2, '0');
-  //     const seconds = date.getSeconds().toString().padStart(2, '0');
-  //     setCurrentTime(`${hours}:${minutes}:${seconds}`);
-  //   }, 1000);
-
-  //   return () => clearInterval(interval);
-  // }, []);
-
   useEffect(() => {
     getGameTime(game_id, userInfo.token)
       .then(res => {
@@ -164,12 +152,7 @@ const WheelOfFortune = ({route}) => {
       })
       .catch(error => console.error(error));
   }, [isFocused]);
-  /**
-   * The function `findFutureGame` returns the game ID of the first future game in the `gameTime` array,
-   * or null if no future game is found.
-   * @returns The function `findFutureGame` returns the `game_id` of the first future game found in the
-   * `gameTime` array. If no future game is found, it returns `null`.
-   */
+
   const findFutureGame = () => {
     for (let i = 0; i < gameTime?.length; i++) {
       const checkgameTime = gameTime[i].game_time;
@@ -180,11 +163,6 @@ const WheelOfFortune = ({route}) => {
     }
     return null; // Return null if no future game is found
   };
-
-  // useEffect(() => {
-  //   // serverFetchedTime();
-  //   doSpin();
-  // }, [isFocused]);
 
   console.log('qwertyuioppadjdsafskdgsufgvbs', serverDateTime);
 
@@ -223,6 +201,85 @@ const WheelOfFortune = ({route}) => {
       doSpin();
     }
   }, [cutToMinuteServerTime]);
+
+  const sendBidData = async entryNumObj => {
+    await axios
+      .post(
+        `${BASE_URL}/add_bid_others`,
+        {
+          data: [
+            {
+              game_id: futureGame,
+              game_entry_number: parseInt(entryNumObj),
+              game_amt: coinAmount,
+              game_flag: item?.game_flag,
+            },
+          ],
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${userInfo.token}`,
+          },
+        },
+      )
+      .then(res => {
+        console.log(res.data.status);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
+  const handleCoinPressed = coinObj => {
+    setCoinAmount(parseInt(coinObj.amt));
+    console.log(parseInt(coinObj.amt));
+    // ToastAndroid.showWithGravityAndOffset(
+    //   'Now!',
+    //   ToastAndroid.SHORT,
+    //   ToastAndroid.CENTER,
+    //   25,
+    //   50,
+    // );
+    setEntryNumber(null);
+    Alert.alert('Coin added', 'Now Add Bid Number.');
+  };
+
+  const handleEntryNumberPressed = entryNumObj => {
+    // setEntryNumber(parseInt(entryNumObj));
+    // console.log(parseInt(entryNumObj));
+    try {
+      if (coinAmount != null) {
+        sendBidData(entryNumObj);
+        ToastAndroid.showWithGravityAndOffset(
+          'Bid Data Sent!',
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER,
+          25,
+          50,
+        );
+        setCoinAmount(null);
+        // setEntryNumber(null);
+      } else {
+        ToastAndroid.showWithGravityAndOffset(
+          'ADD COIN FIRST!',
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER,
+          25,
+          50,
+        );
+      }
+    } catch (error) {
+      console.log('====error====', err);
+
+      ToastAndroid.showWithGravityAndOffset(
+        'ADD COIN FIRST!!!!!',
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER,
+        25,
+        50,
+      );
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -283,7 +340,10 @@ const WheelOfFortune = ({route}) => {
             }}>
             <View style={styles.buttonRow}>
               {buttonArray.map((item, index) => (
-                <TouchableOpacity style={styles.buttonStyle} key={index}>
+                <TouchableOpacity
+                  style={styles.buttonStyle}
+                  key={index}
+                  onPress={() => handleEntryNumberPressed(item)}>
                   <Text style={styles.buttonTextStyle}>{item}</Text>
                   <Text
                     style={{
@@ -320,7 +380,7 @@ const WheelOfFortune = ({route}) => {
             {coinArray.map((item, index) => (
               <TouchableOpacity
                 style={styles.coinButtonStyle}
-                onPress={() => {}}
+                onPress={() => handleCoinPressed(item)}
                 key={index}>
                 <ImageBackground
                   source={item.coinImg}
