@@ -71,6 +71,8 @@ const prize = [
   {name: '4', image: prizeIm},
 ];
 
+const winnerArray = new Array(5);
+
 const SIZE = 270;
 const WheelOfFortune = ({route}) => {
   const {userInfo} = useContext(AuthContext);
@@ -116,7 +118,7 @@ const WheelOfFortune = ({route}) => {
     console.log('endSuccess', endSuccess);
   };
 
-  const [serverTime, setServerTime] = useState();
+  const [serverDateTime, setServerDateTime] = useState(() => '');
 
   const serverFetchedTime = async () => {
     try {
@@ -127,43 +129,47 @@ const WheelOfFortune = ({route}) => {
           },
         })
         .then(res => {
-          setServerTime(res.data.date_time);
+          setServerDateTime(res.data.date_time);
         });
     } catch (error) {
       console.log('ERRR', error);
     }
   };
 
-  // const {userInfo} = useContext(AuthContext);
   const isFocused = useIsFocused();
-  const [gameTime, SetGameTime] = useState([]);
+  const [gameTime, setGameTime] = useState([]);
   const {getGameTime} = handleGetGameTime();
 
   const {game_id, item} = route.params;
 
   const [currentTime, setCurrentTime] = useState('');
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const date = new Date();
-      const hours = date.getHours().toString().padStart(2, '0');
-      const minutes = date.getMinutes().toString().padStart(2, '0');
-      const seconds = date.getSeconds().toString().padStart(2, '0');
-      setCurrentTime(`${hours}:${minutes}:${seconds}`);
-    }, 1000);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     const date = new Date();
+  //     const hours = date.getHours().toString().padStart(2, '0');
+  //     const minutes = date.getMinutes().toString().padStart(2, '0');
+  //     const seconds = date.getSeconds().toString().padStart(2, '0');
+  //     setCurrentTime(`${hours}:${minutes}:${seconds}`);
+  //   }, 1000);
 
-    return () => clearInterval(interval);
-  }, []);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   useEffect(() => {
     getGameTime(game_id, userInfo.token)
       .then(res => {
-        SetGameTime(res.data.data);
+        setGameTime(res.data.data);
         console.log('hsdiufyisdutgrgsfrsdgy', res.data.data);
       })
       .catch(error => console.error(error));
   }, [isFocused]);
-  // game_time
+  /**
+   * The function `findFutureGame` returns the game ID of the first future game in the `gameTime` array,
+   * or null if no future game is found.
+   * @returns The function `findFutureGame` returns the `game_id` of the first future game found in the
+   * `gameTime` array. If no future game is found, it returns `null`.
+   */
   const findFutureGame = () => {
     for (let i = 0; i < gameTime?.length; i++) {
       const checkgameTime = gameTime[i].game_time;
@@ -175,15 +181,48 @@ const WheelOfFortune = ({route}) => {
     return null; // Return null if no future game is found
   };
 
-  useEffect(() => {
-    serverFetchedTime();
-  }, []);
+  // useEffect(() => {
+  //   // serverFetchedTime();
+  //   doSpin();
+  // }, [isFocused]);
 
-  console.log('qwertyuioppadjdsafskdgsufgvbs', serverTime);
+  console.log('qwertyuioppadjdsafskdgsufgvbs', serverDateTime);
+
+  // future game ID
   const futureGame = findFutureGame();
   console.log('qwertyuioppadjdsafskdgsufgvbsdsarfsedfrgtr', futureGame);
-  const isLive = futureGame != null && futureGame == item.game_id;
+
+  // Live starting Time boolean
+  const isLive = futureGame != null && futureGame == gameTime[0].game_id;
   console.log('isLive', isLive);
+
+  // Game starting time
+  console.log('gameTime.game_time', gameTime[0]?.game_time);
+
+  // returns [date, time] in this format
+  let dateAndTimeArray = serverDateTime.split(' ');
+  console.log('CUTTTEEDDDD SERVER TIME', dateAndTimeArray[1]);
+
+  let cutToMinuteServerTime = dateAndTimeArray[1]?.slice(0, 5);
+  console.log('cutToMinuteServerTime', cutToMinuteServerTime);
+  let cutToMinuteGameTime = gameTime[0]?.game_time?.slice(0, 5);
+  console.log('cutToMinuteGameTime', cutToMinuteGameTime);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      serverFetchedTime();
+      setCurrentTime(dateAndTimeArray);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (isLive && cutToMinuteGameTime == cutToMinuteServerTime) {
+      console.log('TRIGGEREED!!!!!');
+      doSpin();
+    }
+  }, [cutToMinuteServerTime]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -195,14 +234,14 @@ const WheelOfFortune = ({route}) => {
           <Text style={styles.prizeText}>
             REWARD: {prizeIdx !== -1 ? prize[prizeIdx]?.name : ''}
           </Text>
-          {/* <Image source={prize[prizeIdx]?.image} style={styles.itemWrap} /> */}
+          <Image source={prize[prizeIdx]?.image} style={styles.itemWrap} />
         </View>
         <View style={styles.centerWheel}>
           <GoGoSpin
             onEndSpinCallBack={onEndSpin}
             notShowDividLine={true}
             spinDuration={15000}
-            spinReverse={true}
+            spinReverse={false}
             spinTime={15}
             ref={spinRef}
             width={SIZE}
@@ -222,11 +261,17 @@ const WheelOfFortune = ({route}) => {
             }}
           />
           <TouchableOpacity
+            disabled
             style={styles.spinWarp}
-            onPress={() => isLive && doSpin()}>
+            onPress={() => conditionalSpinning()}>
             <Image source={btnIm} style={styles.spinBtn} />
           </TouchableOpacity>
         </View>
+        {/* <View>
+          {winnerArray.map((item, index) => {
+
+          })}
+        </View> */}
         <View>
           {/* <Text style={{color: 'white'}}>SECTION 1</Text> */}
           <View
