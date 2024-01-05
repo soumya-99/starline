@@ -405,7 +405,7 @@ const WheelOfFortune = ({route}) => {
             </View>
           </View>
         </View>
-        <View>
+        {/* <View>
           <Text
             style={{
               color: 'white',
@@ -415,7 +415,7 @@ const WheelOfFortune = ({route}) => {
             }}>
             TOTAL AMOUNT: 2000
           </Text>
-        </View>
+        </View> */}
         <View
           style={{
             marginLeft: normalize(35),
