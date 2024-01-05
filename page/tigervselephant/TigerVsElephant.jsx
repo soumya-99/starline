@@ -324,7 +324,7 @@ export default function TigerVsElephant({route}) {
 
   return (
     <SafeAreaView style={styles.outerContainer}>
-      <View style={{flex: 3}}>
+      <View style={{flex: 2}}>
         <TitleBar />
       </View>
       <ScrollView
@@ -374,7 +374,7 @@ export default function TigerVsElephant({route}) {
         <View style={styles.scoreContainer}>
           <Text style={styles.scoreText}>Score: 12353</Text>
         </View>
-        <View style={styles.btnContainer}>
+        {/* <View style={styles.btnContainer}>
           <Button
             disabled
             icon="autorenew"
@@ -387,10 +387,12 @@ export default function TigerVsElephant({route}) {
             textColor="black">
             START GAME
           </Button>
-        </View>
+        </View> */}
         <View
           style={{
-            marginLeft: normalize(35),
+            marginTop: normalize(60),
+            marginLeft: normalize(6),
+            alignSelf: 'center',
           }}>
           <View style={styles.buttonRow}>
             {coinArray.map((item, index) => (
