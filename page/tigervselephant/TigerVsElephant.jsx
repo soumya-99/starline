@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import Animated, {
   useSharedValue,
   withTiming,
@@ -7,11 +7,19 @@ import Animated, {
   withRepeat,
   withSequence,
 } from 'react-native-reanimated';
-import {StyleSheet, View, Image, ImageBackground} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Image,
+  ImageBackground,
+  ToastAndroid,
+  Alert,
+} from 'react-native';
 import {Button, Text} from 'react-native-paper';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import normalize from 'react-native-normalize';
-import Sound from 'react-native-sound';
+import SoundPlayer from 'react-native-sound-player';
+// import Sound from 'react-native-sound';
 
 import tiger from '../../assets/tiger.png';
 import elephant from '../../assets/hati_angry.png';
@@ -25,6 +33,11 @@ import coinBlk from '../../assets/coinBlk-removebg-preview.png';
 import coinO from '../../assets/coinO-removebg-preview.png';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import TitleBar from '../../component/titlebar/TitleBar';
+import {useIsFocused} from '@react-navigation/native';
+import handleGetGameTime from '../../hooks/controller/Game/handleGetGameTime';
+import {AuthContext} from '../../src/context/AuthContext';
+import axios from 'axios';
+import {BASE_URL} from '../../src/config';
 
 const coinArray = [
   {
@@ -49,6 +62,8 @@ const coinArray = [
   },
 ];
 
+const buttonArray = [0, 1];
+
 const ANGLE = 10;
 const TIME = 100;
 const EASING = Easing.ease;
@@ -57,51 +72,17 @@ const ANGLE_2 = 20;
 const TIME_2 = 90;
 const EASING_2 = Easing.elastic(1.5);
 
-export default function TigerVsElephant() {
-  var tigrSound = new Sound('tiger1.mp3', Sound.MAIN_BUNDLE, error => {
-    if (error) {
-      console.log('failed to load the sound', error);
-      return;
-    }
-    // loaded successfully
-    console.log(
-      'duration in seconds: ' +
-        tigrSound.getDuration() +
-        'number of channels: ' +
-        tigrSound.getNumberOfChannels(),
-    );
-    // Play the sound with an onEnd callback
-  });
+export default function TigerVsElephant({route}) {
+  const {userInfo} = useContext(AuthContext);
+  const isFocused = useIsFocused();
+  const [gameTime, setGameTime] = useState([]);
+  const {getGameTime} = handleGetGameTime();
+  const {game_id, item} = route.params;
 
-  var eleSound = new Sound('elephant1.mp3', Sound.MAIN_BUNDLE, error => {
-    if (error) {
-      console.log('failed to load the sound', error);
-      return;
-    }
-    // loaded successfully
-    console.log(
-      'duration in seconds: ' +
-        eleSound.getDuration() +
-        'number of channels: ' +
-        eleSound.getNumberOfChannels(),
-    );
-    // Play the sound with an onEnd callback
-  });
+  const [currentTime, setCurrentTime] = useState('');
 
-  var drawSound = new Sound('draw1.mp3', Sound.MAIN_BUNDLE, error => {
-    if (error) {
-      console.log('failed to load the sound', error);
-      return;
-    }
-    // loaded successfully
-    console.log(
-      'duration in seconds: ' +
-        drawSound.getDuration() +
-        'number of channels: ' +
-        drawSound.getNumberOfChannels(),
-    );
-    // Play the sound with an onEnd callback
-  });
+  const [coinAmount, setCoinAmount] = useState(null);
+  const [entryNumber, setEntryNumber] = useState(null);
 
   // =================== Animation Starts ===================
   const rotation = useSharedValue(0);
@@ -138,21 +119,7 @@ export default function TigerVsElephant() {
       withRepeat(withTiming(ANGLE, {duration: TIME, easing: EASING}), 5, true),
       withTiming(ANGLE, {duration: TIME, easing: EASING}),
     );
-    // setTimeout(() => {
     generateRandom();
-    // }, 100);
-
-    // setTimeout(() => {
-    //   if (randomNum1 > randomNum2) {
-    //     tigrSound.play(success => {
-    //       if (success) {
-    //         console.log('successfully finished playing');
-    //       } else {
-    //         console.log('playback failed due to audio decoding errors');
-    //       }
-    //     });
-    //   }
-    // }, 200);
   };
   const [randomNum1, setRandomNum1] = useState(1);
   const [randomNum2, setRandomNum2] = useState(1);
@@ -161,47 +128,199 @@ export default function TigerVsElephant() {
   const generateRandom = () => {
     setRandomNum1(Math.floor(Math.random() * 20));
     setRandomNum2(Math.floor(Math.random() * 20));
-
-    // setTigerState(randomNum1 > randomNum2);
-    // setElephantState(randomNum1 < randomNum2);
-
-    // setTimeout(() => {
-    //   setTigerState(true);
-    //   setElephantState(true);
-    // }, 30000);
   };
   // =================== Animation Ends ===================
 
   console.log('randomNum1111111 > randomNum2222222', randomNum1, randomNum2);
 
-  setTimeout(() => {
-    console.log('randomNum1 > randomNum2', randomNum1, randomNum2);
-    if (randomNum1 > randomNum2) {
-      tigrSound.play(success => {
-        if (success) {
-          console.log('successfully finished playing');
-        } else {
-          console.log('playback failed due to audio decoding errors');
-        }
-      });
-    } else if (randomNum1 < randomNum2) {
-      eleSound.play(success => {
-        if (success) {
-          console.log('successfully finished playing');
-        } else {
-          console.log('playback failed due to audio decoding errors');
-        }
-      });
-    } else {
-      drawSound.play(success => {
-        if (success) {
-          console.log('successfully finished playing');
-        } else {
-          console.log('playback failed due to audio decoding errors');
-        }
-      });
+  // setTimeout(() => {
+  //   console.log('randomNum1 > randomNum2', randomNum1, randomNum2);
+  //   if (randomNum1 > randomNum2) {
+  //     try {
+  //       SoundPlayer.playSoundFile('tiger1', 'mp3');
+  //     } catch (e) {
+  //       console.log(`cannot play the sound file and err in server.`, e);
+  //     }
+  //   } else if (randomNum1 < randomNum2) {
+  //     try {
+  //       SoundPlayer.playSoundFile('elephant1', 'mp3');
+  //     } catch (e) {
+  //       console.log(`cannot play the sound file and err in server.`, e);
+  //     }
+  //   } else {
+  //     // try {
+  //     //   SoundPlayer.playSoundFile('draw1', 'mp3');
+  //     // } catch (e) {
+  //     //   console.log(`cannot play the sound file and err in server.`, e);
+  //     // }
+  //   }
+  // }, 100);
+
+  const [serverDateTime, setServerDateTime] = useState(() => '');
+
+  const serverFetchedTime = async () => {
+    try {
+      await axios
+        .get(`${BASE_URL}/server_time`, {
+          headers: {
+            Authorization: `Bearer ${userInfo.token}`,
+          },
+        })
+        .then(res => {
+          setServerDateTime(res.data.date_time);
+        });
+    } catch (error) {
+      console.log('ERRR', error);
     }
-  }, 100);
+  };
+
+  useEffect(() => {
+    getGameTime(game_id, userInfo.token)
+      .then(res => {
+        setGameTime(res.data.data);
+        console.log('hsdiufyisdutgrgsfrsdgy', res.data.data);
+      })
+      .catch(error => console.error(error));
+  }, [isFocused]);
+
+  const findFutureGame = () => {
+    for (let i = 0; i < gameTime?.length; i++) {
+      const checkgameTime = gameTime[i].game_time;
+      // console.log(checkgameTime,currentTime,"\n")
+      if (checkgameTime > currentTime) {
+        return gameTime[i].game_id;
+      }
+    }
+    return null; // Return null if no future game is found
+  };
+
+  console.log('qwertyuioppadjdsafskdgsufgvbs', serverDateTime);
+
+  // future game ID
+  const futureGame = findFutureGame();
+  console.log('qwertyuioppadjdsafskdgsufgvbsdsarfsedfrgtr', futureGame);
+
+  // Live starting Time boolean
+  const isLive = futureGame != null && futureGame == gameTime[0].game_id;
+  console.log('isLive', isLive);
+
+  // Game starting time
+  console.log('gameTime.game_time', gameTime[0]?.game_time);
+
+  // returns [date, time] in this format
+  let dateAndTimeArray = serverDateTime.split(' ');
+  console.log('CUTTTEEDDDD SERVER TIME', dateAndTimeArray[1]);
+
+  let cutToMinuteServerTime = dateAndTimeArray[1]?.slice(0, 5);
+  console.log('cutToMinuteServerTime', cutToMinuteServerTime);
+  let cutToMinuteGameTime = gameTime[0]?.game_time?.slice(0, 5);
+  console.log('cutToMinuteGameTime', cutToMinuteGameTime);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      serverFetchedTime();
+      setCurrentTime(dateAndTimeArray);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (isLive && cutToMinuteGameTime == cutToMinuteServerTime) {
+      console.log('TRIGGEREED!!!!!');
+      handlePress();
+
+      console.log('randomNum1 > randomNum2', randomNum1, randomNum2);
+      if (randomNum1 > randomNum2) {
+        try {
+          SoundPlayer.playSoundFile('tiger1', 'mp3');
+        } catch (e) {
+          console.log(`cannot play the sound file and err in server.`, e);
+        }
+      } else if (randomNum1 < randomNum2) {
+        try {
+          SoundPlayer.playSoundFile('elephant1', 'mp3');
+        } catch (e) {
+          console.log(`cannot play the sound file and err in server.`, e);
+        }
+      } else if (randomNum1 == randomNum2) {
+        try {
+          SoundPlayer.playSoundFile('draw1', 'mp3');
+        } catch (e) {
+          console.log(`cannot play the sound file and err in server.`, e);
+        }
+      }
+    }
+  }, [cutToMinuteServerTime]);
+
+  const sendBidData = async entryNumObj => {
+    await axios
+      .post(
+        `${BASE_URL}/add_bid_others`,
+        {
+          data: [
+            {
+              game_id: futureGame,
+              game_entry_number: parseInt(entryNumObj),
+              game_amt: coinAmount,
+              game_flag: item?.game_flag,
+            },
+          ],
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${userInfo.token}`,
+          },
+        },
+      )
+      .then(res => {
+        console.log(res.data.status);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
+  const handleCoinPressed = coinObj => {
+    setCoinAmount(parseInt(coinObj.amt));
+    console.log(parseInt(coinObj.amt));
+    setEntryNumber(null);
+    Alert.alert('Coin added', 'Now click on TIGER/ELEPHANT.');
+  };
+
+  const handleEntryNumberPressed = async entryNumObj => {
+    try {
+      if (coinAmount != null) {
+        await sendBidData(entryNumObj);
+        ToastAndroid.showWithGravityAndOffset(
+          'Bid Data Sent!',
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER,
+          25,
+          50,
+        );
+        setCoinAmount(null);
+        // setEntryNumber(null);
+      } else {
+        ToastAndroid.showWithGravityAndOffset(
+          'ADD COIN FIRST!',
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER,
+          25,
+          50,
+        );
+      }
+    } catch (error) {
+      console.log('====error====', error);
+      ToastAndroid.showWithGravityAndOffset(
+        "You don't have enough money!",
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER,
+        25,
+        50,
+      );
+    }
+  };
 
   return (
     <SafeAreaView style={styles.outerContainer}>
@@ -221,20 +340,20 @@ export default function TigerVsElephant() {
           <Text style={styles.headerGameText}>Tiger 🐅 Vs Elephant 🐘</Text>
         </View>
         <View style={styles.container}>
-          <TouchableOpacity onPress={() => {}}>
+          <TouchableOpacity onPress={() => handleEntryNumberPressed(0)}>
             <Animated.View
               style={[styles.box, animatedStyle, styles.shadowProp]}>
               <Image
-                source={(randomNum1 > randomNum2 || tgrEleState) && tiger}
+                source={randomNum1 > randomNum2 || tgrEleState ? tiger : ''}
                 style={{width: 'auto', height: normalize(150)}}
               />
             </Animated.View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => {}}>
+          <TouchableOpacity onPress={() => handleEntryNumberPressed(1)}>
             <Animated.View
               style={[styles.box, animatedStyle, styles.shadowProp]}>
               <Image
-                source={(randomNum1 < randomNum2 || tgrEleState) && elephant}
+                source={randomNum1 < randomNum2 || tgrEleState ? elephant : ''}
                 style={{width: 'auto', height: normalize(120)}}
               />
             </Animated.View>
@@ -257,6 +376,7 @@ export default function TigerVsElephant() {
         </View>
         <View style={styles.btnContainer}>
           <Button
+            disabled
             icon="autorenew"
             mode="contained"
             onPress={() => {
@@ -277,7 +397,7 @@ export default function TigerVsElephant() {
               <TouchableOpacity
                 key={index}
                 style={styles.coinButtonStyle}
-                onPress={() => {}}>
+                onPress={() => handleCoinPressed(item)}>
                 <ImageBackground
                   source={item.coinImg}
                   style={styles.coinButton}>
