@@ -10,8 +10,9 @@ import {
 } from 'react-native';
 import React, {useContext, useEffect, useRef, useState} from 'react';
 
+import SoundPlayer from 'react-native-sound-player';
+
 import {GoGoSpin} from 'react-native-gogo-spin';
-import Sound from 'react-native-sound';
 
 import kingIm from '../../assets/king.png';
 import prizeIm from '../../assets/prize.png';
@@ -19,7 +20,7 @@ import prizeIm from '../../assets/prize.png';
 // import whlIm from '../../assets/whl-2.png';
 import whlIm from '../../assets/whl-2_work-1.png';
 // import btnIm from '../../assets/btn.png';
-import btnIm from '../../assets/btn-1.png';
+import btnIm from '../../assets/btn-12.png';
 
 import coinR from '../../assets/coin-rem.png';
 import coinB from '../../assets/coin-blu-2-rem.png';
@@ -61,16 +62,16 @@ const coinArray = [
 ];
 
 const prize = [
-  {name: '9', image: kingIm},
-  {name: '1', image: prizeIm},
-  {name: '2', image: prizeIm},
-  {name: '0', image: prizeIm},
-  {name: '3', image: prizeIm},
-  {name: '8', image: prizeIm},
-  {name: '7', image: prizeIm},
-  {name: '6', image: prizeIm},
-  {name: '5', image: prizeIm},
-  {name: '4', image: prizeIm},
+  {name: '0', color: '#ef66b8'},
+  {name: '1', color: '#fbe34f'},
+  {name: '2', color: '#84fa95'},
+  {name: '3', color: '#7287bc'},
+  {name: '4', color: '#f96726'},
+  {name: '5', color: '#bda868'},
+  {name: '6', color: '#73fb4f'},
+  {name: '7', color: '#14bdf6'},
+  {name: '8', color: '#13f2d5'},
+  {name: '9', color: '#a068e3'},
 ];
 
 const winnerArray = new Array(5);
@@ -91,37 +92,65 @@ const WheelOfFortune = ({route}) => {
   const [coinAmount, setCoinAmount] = useState(null);
   const [entryNumber, setEntryNumber] = useState(null);
 
-  // Enable playback in silence mode
-  Sound.setCategory('Playback');
+  // const FormData = require('form-data');
 
-  var whoosh = new Sound('whl2.mp3', Sound.MAIN_BUNDLE, error => {
-    if (error) {
-      console.log('failed to load the sound', error);
-      return;
-    }
-    // loaded successfully
-    console.log(
-      'duration in seconds: ' +
-        whoosh.getDuration() +
-        'number of channels: ' +
-        whoosh.getNumberOfChannels(),
-    );
-  });
+  const getWinnerIdx = async () => {
+    // let data = new FormData();
+    // data.append('game_id', '37');
+    // data.append('game_flag', 'SP');
+    await axios
+      .post(
+        `${BASE_URL}/others_result`,
+        {
+          game_id: 37,
+          game_flag: 'SP',
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${userInfo.token}`,
+          },
+        },
+      )
+      .then(res => {
+        setprizeIdx(parseInt(res.data.data[0].game_result));
+        console.log('RESSSSSSS IDXXXXX', res.data);
+        console.log(
+          'RESSSSSSS IDXXXXX',
+          parseInt(res.data.data[0].game_result),
+        );
+        let idx = parseInt(res.data.data[0].game_result);
+        console.log('-------========-------=========---', idx);
+        spinRef?.current?.doSpinAnimate(idx);
 
-  const doSpin = () => {
-    const getIdx = Math.floor(Math.random() * prize.length);
-    setprizeIdx(getIdx);
-    spinRef?.current?.doSpinAnimate(getIdx);
-
-    // whoosh.play();
-    whoosh.play(success => {
-      if (success) {
-        console.log('successfully finished playing');
-      } else {
-        console.log('playback failed due to audio decoding errors');
-      }
-    });
+        try {
+          SoundPlayer.playSoundFile('whl2', 'mp3');
+        } catch (e) {
+          console.log(`cannot play the sound file and err in server.`, e);
+        }
+      })
+      .catch(err => {
+        console.log(
+          'Error in the server, please wait or come back in few times.',
+          err,
+        );
+      });
   };
+
+  // const doSpin = idx => {
+  //   // const getIdx = Math.floor(Math.random() * prize.length);
+  //   // setprizeIdx(getIdx);
+  //   // getWinnerIdx();
+
+  //   try {
+  //     // console.log('=====================kasj============', idx);
+  //     // spinRef?.current?.doSpinAnimate(idx);
+  //     // play the file tone.mp3
+  //     SoundPlayer.playSoundFile('whl2', 'mp3');
+  //   } catch (e) {
+  //     console.log(`cannot play the sound file and err in server.`, e);
+  //   }
+  // };
+
   const onEndSpin = endSuccess => {
     console.log('endSuccess', endSuccess);
   };
@@ -198,7 +227,7 @@ const WheelOfFortune = ({route}) => {
   useEffect(() => {
     if (isLive && cutToMinuteGameTime == cutToMinuteServerTime) {
       console.log('TRIGGEREED!!!!!');
-      doSpin();
+      getWinnerIdx();
     }
   }, [cutToMinuteServerTime]);
 
@@ -233,23 +262,14 @@ const WheelOfFortune = ({route}) => {
   const handleCoinPressed = coinObj => {
     setCoinAmount(parseInt(coinObj.amt));
     console.log(parseInt(coinObj.amt));
-    // ToastAndroid.showWithGravityAndOffset(
-    //   'Now!',
-    //   ToastAndroid.SHORT,
-    //   ToastAndroid.CENTER,
-    //   25,
-    //   50,
-    // );
     setEntryNumber(null);
     Alert.alert('Coin added', 'Now Add Bid Number.');
   };
 
-  const handleEntryNumberPressed = entryNumObj => {
-    // setEntryNumber(parseInt(entryNumObj));
-    // console.log(parseInt(entryNumObj));
+  const handleEntryNumberPressed = async entryNumObj => {
     try {
       if (coinAmount != null) {
-        sendBidData(entryNumObj);
+        await sendBidData(entryNumObj);
         ToastAndroid.showWithGravityAndOffset(
           'Bid Data Sent!',
           ToastAndroid.SHORT,
@@ -270,9 +290,8 @@ const WheelOfFortune = ({route}) => {
       }
     } catch (error) {
       console.log('====error====', err);
-
       ToastAndroid.showWithGravityAndOffset(
-        'ADD COIN FIRST!!!!!',
+        "You don't have enough money!",
         ToastAndroid.SHORT,
         ToastAndroid.CENTER,
         25,
@@ -288,10 +307,10 @@ const WheelOfFortune = ({route}) => {
       </View>
       <ScrollView>
         <View style={styles.rowContainer}>
-          <Text style={styles.prizeText}>
+          {/* <Text style={styles.prizeText}>
             REWARD: {prizeIdx !== -1 ? prize[prizeIdx]?.name : ''}
-          </Text>
-          <Image source={prize[prizeIdx]?.image} style={styles.itemWrap} />
+          </Text> */}
+          {/* <Image source={prize[prizeIdx]?.image} style={styles.itemWrap} /> */}
         </View>
         <View style={styles.centerWheel}>
           <GoGoSpin
@@ -320,15 +339,42 @@ const WheelOfFortune = ({route}) => {
           <TouchableOpacity
             disabled
             style={styles.spinWarp}
-            onPress={() => conditionalSpinning()}>
+            onPress={getWinnerIdx}>
             <Image source={btnIm} style={styles.spinBtn} />
           </TouchableOpacity>
         </View>
-        {/* <View>
-          {winnerArray.map((item, index) => {
-
-          })}
-        </View> */}
+        <View
+          style={{
+            justifyContent: 'center',
+            width: '100%',
+            alignItems: 'center',
+            alignContent: 'center',
+          }}>
+          <View
+            style={{
+              // padding: 10,
+              flexDirection: 'row',
+              justifyContent: 'space-evenly',
+              alignItems: 'center',
+              alignContent: 'center',
+              width: '100%',
+              marginTop: normalize(20),
+              // backgroundColor: 'lavender',
+            }}>
+            {prize.map((item, index) => {
+              return (
+                <View
+                  key={index}
+                  style={{
+                    height: normalize(10),
+                    width: normalize(10),
+                    borderRadius: normalize(50),
+                    backgroundColor: item.color,
+                  }}></View>
+              );
+            })}
+          </View>
+        </View>
         <View>
           {/* <Text style={{color: 'white'}}>SECTION 1</Text> */}
           <View
@@ -348,7 +394,7 @@ const WheelOfFortune = ({route}) => {
                   <Text
                     style={{
                       position: 'absolute',
-                      top: normalize(60),
+                      top: normalize(55),
                       left: normalize(45),
                       fontSize: normalize(12),
                       color: 'black',
@@ -409,7 +455,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'center',
-    marginVertical: normalize(10),
+    marginVertical: normalize(20),
   },
   prizeText: {
     color: '#fff',
@@ -439,7 +485,7 @@ const styles = StyleSheet.create({
   buttonStyle: {
     justifyContent: 'center',
     alignItems: 'center',
-    height: normalize(80),
+    height: normalize(75),
     width: normalize(66),
     backgroundColor: '#FDFD96',
     borderColor: '#FDA172',
