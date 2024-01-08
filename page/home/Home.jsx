@@ -388,6 +388,7 @@ const Home = ({navigation}) => {
                       navigateTo={() =>
                         navigation.navigate('TgrVsElphnt', {
                           game_id: item.game_id,
+                          item: item,
                         })
                       }
                       bgColor="#3d0024"

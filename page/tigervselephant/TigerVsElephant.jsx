@@ -96,6 +96,7 @@ export default function TigerVsElephant({route}) {
 
   const [tgrEleState, setTgrEleState] = useState(() => true);
   const handlePress = () => {
+    getResult();
     setTgrEleState(false);
     // setTigerState(true);
     // setElephantState(true);
@@ -119,42 +120,37 @@ export default function TigerVsElephant({route}) {
       withRepeat(withTiming(ANGLE, {duration: TIME, easing: EASING}), 5, true),
       withTiming(ANGLE, {duration: TIME, easing: EASING}),
     );
-    generateRandom();
+    // generateRandom();
   };
-  const [randomNum1, setRandomNum1] = useState(1);
-  const [randomNum2, setRandomNum2] = useState(1);
+  // const [randomNum1, setRandomNum1] = useState(1);
+  // const [randomNum2, setRandomNum2] = useState(1);
   // const [tigerState, setTigerState] = useState(true);
   // const [elephantState, setElephantState] = useState(true);
-  const generateRandom = () => {
-    setRandomNum1(Math.floor(Math.random() * 20));
-    setRandomNum2(Math.floor(Math.random() * 20));
+
+  const [winnerState, setWinnerState] = useState('0');
+
+  const getResult = async () => {
+    await axios
+      .post(
+        `${BASE_URL}/others_result`,
+        {
+          game_id: futureGame,
+          game_flag: item?.game_flag,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${userInfo.token}`,
+          },
+        },
+      )
+      .then(res => {
+        console.log(res.data.data[0].game_result);
+        setWinnerState(res.data.data[0].game_result);
+      })
+      .catch(err => {
+        console.log('EEEERRRRRRRRRR', err);
+      });
   };
-  // =================== Animation Ends ===================
-
-  console.log('randomNum1111111 > randomNum2222222', randomNum1, randomNum2);
-
-  // setTimeout(() => {
-  //   console.log('randomNum1 > randomNum2', randomNum1, randomNum2);
-  //   if (randomNum1 > randomNum2) {
-  //     try {
-  //       SoundPlayer.playSoundFile('tiger1', 'mp3');
-  //     } catch (e) {
-  //       console.log(`cannot play the sound file and err in server.`, e);
-  //     }
-  //   } else if (randomNum1 < randomNum2) {
-  //     try {
-  //       SoundPlayer.playSoundFile('elephant1', 'mp3');
-  //     } catch (e) {
-  //       console.log(`cannot play the sound file and err in server.`, e);
-  //     }
-  //   } else {
-  //     // try {
-  //     //   SoundPlayer.playSoundFile('draw1', 'mp3');
-  //     // } catch (e) {
-  //     //   console.log(`cannot play the sound file and err in server.`, e);
-  //     // }
-  //   }
-  // }, 100);
 
   const [serverDateTime, setServerDateTime] = useState(() => '');
 
@@ -229,27 +225,6 @@ export default function TigerVsElephant({route}) {
     if (isLive && cutToMinuteGameTime == cutToMinuteServerTime) {
       console.log('TRIGGEREED!!!!!');
       handlePress();
-
-      console.log('randomNum1 > randomNum2', randomNum1, randomNum2);
-      if (randomNum1 > randomNum2) {
-        try {
-          SoundPlayer.playSoundFile('tiger1', 'mp3');
-        } catch (e) {
-          console.log(`cannot play the sound file and err in server.`, e);
-        }
-      } else if (randomNum1 < randomNum2) {
-        try {
-          SoundPlayer.playSoundFile('elephant1', 'mp3');
-        } catch (e) {
-          console.log(`cannot play the sound file and err in server.`, e);
-        }
-      } else if (randomNum1 == randomNum2) {
-        try {
-          SoundPlayer.playSoundFile('draw1', 'mp3');
-        } catch (e) {
-          console.log(`cannot play the sound file and err in server.`, e);
-        }
-      }
     }
   }, [cutToMinuteServerTime]);
 
@@ -274,12 +249,15 @@ export default function TigerVsElephant({route}) {
         },
       )
       .then(res => {
-        console.log(res.data.status);
+        console.log('RES - sendBidData', res.data.status);
+        // getResult();
       })
       .catch(err => {
         console.log(err);
       });
   };
+
+  // console.log('SDYGFFCYTWAGS', item);
 
   const handleCoinPressed = coinObj => {
     setCoinAmount(parseInt(coinObj.amt));
@@ -291,9 +269,12 @@ export default function TigerVsElephant({route}) {
   const handleEntryNumberPressed = async entryNumObj => {
     try {
       if (coinAmount != null) {
+        console.log('ewuriwetttttgyetwuirtfrs', entryNumObj);
         await sendBidData(entryNumObj);
+        await getResult();
+        console.log('RRRRRRWWWWSSDHBFCFWSGVXDDVC', winnerState);
         ToastAndroid.showWithGravityAndOffset(
-          'Bid Data Sent!',
+          'Bidding Done!',
           ToastAndroid.SHORT,
           ToastAndroid.CENTER,
           25,
@@ -344,7 +325,7 @@ export default function TigerVsElephant({route}) {
             <Animated.View
               style={[styles.box, animatedStyle, styles.shadowProp]}>
               <Image
-                source={randomNum1 > randomNum2 || tgrEleState ? tiger : ''}
+                source={winnerState == '0' ? tiger : ''}
                 style={{width: 'auto', height: normalize(150)}}
               />
             </Animated.View>
@@ -353,7 +334,7 @@ export default function TigerVsElephant({route}) {
             <Animated.View
               style={[styles.box, animatedStyle, styles.shadowProp]}>
               <Image
-                source={randomNum1 < randomNum2 || tgrEleState ? elephant : ''}
+                source={winnerState == '1' ? elephant : ''}
                 style={{width: 'auto', height: normalize(120)}}
               />
             </Animated.View>
@@ -362,17 +343,17 @@ export default function TigerVsElephant({route}) {
         <View style={styles.bigCoinsContainer}>
           <Animated.View style={[animStyle]}>
             <ImageBackground source={coinR} style={styles.bigCoin}>
-              <Text style={styles.bigCoinText}>{randomNum1}</Text>
+              <Text style={styles.bigCoinText}>{winnerState}</Text>
             </ImageBackground>
           </Animated.View>
           <Animated.View style={[animStyle]}>
             <ImageBackground source={coinB} style={styles.bigCoin}>
-              <Text style={styles.bigCoinText}>{randomNum2}</Text>
+              <Text style={styles.bigCoinText}>{winnerState}</Text>
             </ImageBackground>
           </Animated.View>
         </View>
         <View style={styles.scoreContainer}>
-          <Text style={styles.scoreText}>Score: 12353</Text>
+          <Text style={styles.scoreText}>Last Winner: Tiger</Text>
         </View>
         {/* <View style={styles.btnContainer}>
           <Button
@@ -495,17 +476,19 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   scoreContainer: {
-    height: normalize(40),
-    width: normalize(200),
+    // top: 400,
+    // position: 'absolute',
+    height: normalize(50),
+    width: normalize(250),
     backgroundColor: 'purple',
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 10,
+    marginVertical: normalize(10),
     alignSelf: 'flex-end',
-    borderTopLeftRadius: 10,
+    borderTopLeftRadius: normalize(20),
   },
   scoreText: {
-    fontSize: 20,
+    fontSize: normalize(25),
     fontWeight: '800',
     color: 'aliceblue',
   },

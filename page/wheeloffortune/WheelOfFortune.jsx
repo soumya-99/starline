@@ -92,18 +92,13 @@ const WheelOfFortune = ({route}) => {
   const [coinAmount, setCoinAmount] = useState(null);
   const [entryNumber, setEntryNumber] = useState(null);
 
-  // const FormData = require('form-data');
-
   const getWinnerIdx = async () => {
-    // let data = new FormData();
-    // data.append('game_id', '37');
-    // data.append('game_flag', 'SP');
     await axios
       .post(
         `${BASE_URL}/others_result`,
         {
-          game_id: 37,
-          game_flag: 'SP',
+          game_id: futureGame,
+          game_flag: item?.game_flag,
         },
         {
           headers: {
@@ -271,7 +266,7 @@ const WheelOfFortune = ({route}) => {
       if (coinAmount != null) {
         await sendBidData(entryNumObj);
         ToastAndroid.showWithGravityAndOffset(
-          'Bid Data Sent!',
+          'Bidding Done!',
           ToastAndroid.SHORT,
           ToastAndroid.CENTER,
           25,
@@ -352,21 +347,25 @@ const WheelOfFortune = ({route}) => {
           }}>
           <View
             style={{
-              // padding: 10,
+              padding: normalize(20),
               flexDirection: 'row',
               justifyContent: 'space-evenly',
               alignSelf: 'center',
+              alignItems: 'center',
               width: '100%',
-              marginTop: normalize(20),
-              // backgroundColor: 'lavender',
+              height: normalize(25),
+              marginTop: normalize(25),
+              marginBottom: normalize(-10),
+              backgroundColor: 'white',
+              borderRadius: normalize(20),
             }}>
             {prize.map((item, index) => {
               return (
                 <View
                   key={index}
                   style={{
-                    height: normalize(10),
-                    width: normalize(10),
+                    height: normalize(20),
+                    width: normalize(25),
                     borderRadius: normalize(50),
                     backgroundColor: item.color,
                   }}></View>
