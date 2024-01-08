@@ -219,7 +219,7 @@ const WheelOfFortune = ({route}) => {
     const interval = setInterval(() => {
       serverFetchedTime();
       setCurrentTime(dateAndTimeArray);
-    }, 1000);
+    }, 2000);
 
     return () => clearInterval(interval);
   }, []);
