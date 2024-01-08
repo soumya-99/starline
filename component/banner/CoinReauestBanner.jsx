@@ -1,14 +1,22 @@
-import { StyleSheet, Text, View, Image, Dimensions,TouchableOpacity,Clipboard } from 'react-native'
-import React, { useContext, useEffect, useState } from 'react'
-import normalize from 'react-native-normalize'
-import { useDimensionsChange } from 'react-native-responsive-dimensions';
-import { useIsFocused, useNavigation } from '@react-navigation/native';
-import { AuthContext } from '../../src/context/AuthContext';
-import { BASE_URL } from '../../src/config';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Dimensions,
+  TouchableOpacity,
+  Clipboard,
+} from 'react-native';
+import React, {useContext, useEffect, useState} from 'react';
+import normalize from 'react-native-normalize';
+import {useDimensionsChange} from 'react-native-responsive-dimensions';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {AuthContext} from '../../src/context/AuthContext';
+import {BASE_URL} from '../../src/config';
 import axios from 'axios';
 
 const CoinReauestBanner = () => {
-  const { userInfo, isLoading } = useContext(AuthContext);
+  const {userInfo, isLoading} = useContext(AuthContext);
   const screenWidth = Dimensions.get('window').width;
   const logoWidth = screenWidth * 0.9; // 80% of the screen width
   const logoHeight = (logoWidth * 0.9) / 2; // Assuming the logo's aspect ratio is 3:1
@@ -23,20 +31,22 @@ const CoinReauestBanner = () => {
   }, [navigation.isFocused()]);
 
   const get_game_info = async () => {
-    await axios.get(`${BASE_URL}/offer`, {
-      headers: {
-        'Authorization': `Bearer ${userInfo.token}`
-      }
-    }).then(res => {
-      console.log("res", res);
-      let gameinfo = res.data;
-      setUpiData(gameinfo.data);
-      console.log("gamecontact", gameinfo);
-    }).catch(er => {
-      console.log("result Network ", er);
-    });
-  }
-
+    await axios
+      .get(`${BASE_URL}/offer`, {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      })
+      .then(res => {
+        console.log('res', res);
+        let gameinfo = res.data;
+        setUpiData(gameinfo.data);
+        console.log('gamecontact', gameinfo);
+      })
+      .catch(er => {
+        console.log('result Network ', er);
+      });
+  };
 
   const handleCopyToClipboard = async () => {
     try {
@@ -49,42 +59,40 @@ const CoinReauestBanner = () => {
     }
   };
 
-
-
   return (
     <View style={styles.container}>
       <View style={styles.card}>
         <View style={styles.mobileNumberContainer}>
-        <TouchableOpacity onPress={handleCopyToClipboard}>
-        <View style={styles.rowContainer2}>
-          <Text style={styles.mobileNumber}>{upiData.trans_no} </Text>
-          <Text style={styles.mobileNumber2}>Copy</Text>
-          </View>
+          <TouchableOpacity onPress={handleCopyToClipboard}>
+            <View style={styles.rowContainer2}>
+              <Text style={styles.mobileNumber}>{upiData.trans_no} </Text>
+              <Text style={styles.mobileNumber2}>Copy</Text>
+            </View>
           </TouchableOpacity>
         </View>
         <View style={styles.rowContainer}>
           <Image
-            source={require('../../assets/icon/bkash.png')}
+            source={require('../../assets/icon/gpay.png')}
             resizeMode="contain"
             style={styles.image}
           />
           <Image
-            source={require('../../assets/icon/Nagad.png')}
+            source={require('../../assets/icon/phonepe.png')}
             resizeMode="contain"
             style={styles.image}
           />
           <Image
-            source={require('../../assets/icon/rocket-removebg.png')}
+            source={require('../../assets/icon/amazonpay.png')}
             resizeMode="contain"
             style={styles.image}
           />
         </View>
       </View>
     </View>
-  )
-}
+  );
+};
 
-export default CoinReauestBanner
+export default CoinReauestBanner;
 
 const styles = StyleSheet.create({
   container: {
@@ -105,16 +113,16 @@ const styles = StyleSheet.create({
   },
   mobileNumber: {
     fontSize: 40,
-    color:"#fff",
+    color: '#fff',
     fontWeight: 'bold',
   },
   mobileNumber2: {
     fontSize: 18,
-    color:"#fff",
+    color: '#fff',
     fontWeight: 'bold',
-    backgroundColor:"#2a73e8",
-    padding:5,
-    borderRadius:5
+    backgroundColor: '#2a73e8',
+    padding: 5,
+    borderRadius: 5,
   },
   rowContainer: {
     flexDirection: 'row',
@@ -129,4 +137,4 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center', // If you want to vertically align the texts
   },
-})
+});

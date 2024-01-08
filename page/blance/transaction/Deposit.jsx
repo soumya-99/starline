@@ -12,9 +12,9 @@ import CoinReauestBanner from '../../../component/banner/CoinReauestBanner';
 
 
 const data = [
-  { label: 'BKash', value: '1' },
-  { label: 'Nagad', value: '2' },
-  { label: 'ROCKET', value: '3' },
+  { label: 'Google Pay UPI', value: '1' },
+  { label: 'PhonePe UPI', value: '2' },
+  { label: 'Amazon Pay UPI', value: '3' },
 
 ];
 
