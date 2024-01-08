@@ -150,6 +150,39 @@ const WheelOfFortune = ({route}) => {
     console.log('endSuccess', endSuccess);
   };
 
+  const [lastWinners, setLastWinners] = useState([]);
+
+  const getLastWinners = async () => {
+    await axios
+      .post(
+        `${BASE_URL}/today_others_result_list`,
+        {
+          game_id: futureGame,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${userInfo.token}`,
+          },
+        },
+      )
+      .then(res => {
+        console.log('auirfgsafsa', res.data.data);
+
+        // for (var i = 0; i < res.data.data.length; i++) {
+        //   var gameResultIndex = dataArray[i].game_result;
+        //   if (colorArray[gameResultIndex]) {
+        //     dataArray[i].colour = colorArray[gameResultIndex];
+        //   } else {
+        //     dataArray[i].colour = '#000000'; // Default color if index is not found
+        //   }
+        // }
+
+        setLastWinners(res.data.data);
+      });
+  };
+
+  console.log('getLastWinners', lastWinners);
+
   const [serverDateTime, setServerDateTime] = useState(() => '');
 
   const serverFetchedTime = async () => {
@@ -169,6 +202,7 @@ const WheelOfFortune = ({route}) => {
   };
 
   useEffect(() => {
+    getLastWinners();
     getGameTime(game_id, userInfo.token)
       .then(res => {
         setGameTime(res.data.data);
@@ -214,6 +248,7 @@ const WheelOfFortune = ({route}) => {
     const interval = setInterval(() => {
       serverFetchedTime();
       setCurrentTime(dateAndTimeArray);
+      // getLastWinners();
     }, 2000);
 
     return () => clearInterval(interval);
@@ -295,6 +330,8 @@ const WheelOfFortune = ({route}) => {
     }
   };
 
+  // getLastWinners();
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={{flex: 1}}>
@@ -359,7 +396,7 @@ const WheelOfFortune = ({route}) => {
               backgroundColor: 'white',
               borderRadius: normalize(20),
             }}>
-            {prize.map((item, index) => {
+            {/* {prize.map((item, index) => {
               return (
                 <View
                   key={index}
@@ -370,6 +407,42 @@ const WheelOfFortune = ({route}) => {
                     backgroundColor: item.color,
                   }}></View>
               );
+            })} */}
+            {/* {lastWinners.map((item, index) => {
+              prize.map((prz, i) => {
+                if (parseInt(item.game_result) == parseInt(prz.name)) {
+                  return (
+                    <View
+                      key={i}
+                      style={{
+                        height: normalize(20),
+                        width: normalize(25),
+                        borderRadius: normalize(50),
+                        backgroundColor: prz.color,
+                      }}></View>
+                  );
+                }
+              });
+            })} */}
+            {lastWinners.map((item, i) => {
+              if (parseInt(prize[i].name) == parseInt(item?.game_result)) {
+                console.log(
+                  'LASTWIIIIIIIII',
+                  prize[i].name,
+                  item.game_result,
+                  prize[i].color,
+                );
+                return (
+                  <View
+                    key={i}
+                    style={{
+                      height: normalize(20),
+                      width: normalize(25),
+                      borderRadius: normalize(50),
+                      backgroundColor: prize[i].color,
+                    }}></View>
+                );
+              }
             })}
           </View>
         </View>
