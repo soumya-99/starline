@@ -178,8 +178,17 @@ const WheelOfFortune = ({route}) => {
         // }
 
         setLastWinners(res.data.data);
+      })
+      .catch(err => {
+        console.log('============+++++++++++', err);
       });
   };
+
+  if (lastWinners.length == 0) {
+    setTimeout(() => {
+      getLastWinners();
+    }, 1000);
+  }
 
   console.log('getLastWinners', lastWinners);
 
@@ -202,7 +211,7 @@ const WheelOfFortune = ({route}) => {
   };
 
   useEffect(() => {
-    getLastWinners();
+    // getLastWinners();
     getGameTime(game_id, userInfo.token)
       .then(res => {
         setGameTime(res.data.data);
@@ -246,10 +255,14 @@ const WheelOfFortune = ({route}) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
+      // if (lastWinners.length == 0) {
+      //   console.log('*******************');
+      //   getLastWinners();
+      // }
       serverFetchedTime();
       setCurrentTime(dateAndTimeArray);
-      // getLastWinners();
     }, 2000);
+    // getLastWinners();
 
     return () => clearInterval(interval);
   }, []);
@@ -329,6 +342,18 @@ const WheelOfFortune = ({route}) => {
       );
     }
   };
+
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     try {
+  //       getLastWinners();
+  //     } catch (error) {
+  //       console.log('LOLAA ERRR', error);
+  //     }
+  //   }, 2000);
+
+  //   return () => clearInterval(interval);
+  // }, []);
 
   // getLastWinners();
 

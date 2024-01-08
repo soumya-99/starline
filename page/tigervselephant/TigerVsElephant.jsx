@@ -127,6 +127,45 @@ export default function TigerVsElephant({route}) {
   // const [tigerState, setTigerState] = useState(true);
   // const [elephantState, setElephantState] = useState(true);
 
+  const [lastWinners, setLastWinners] = useState([]);
+
+  const getLastWinners = async () => {
+    await axios
+      .post(
+        `${BASE_URL}/today_others_result_list`,
+        {
+          game_id: futureGame,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${userInfo.token}`,
+          },
+        },
+      )
+      .then(res => {
+        console.log('auirfgsafsa', res.data.data);
+
+        // for (var i = 0; i < res.data.data.length; i++) {
+        //   var gameResultIndex = dataArray[i].game_result;
+        //   if (colorArray[gameResultIndex]) {
+        //     dataArray[i].colour = colorArray[gameResultIndex];
+        //   } else {
+        //     dataArray[i].colour = '#000000'; // Default color if index is not found
+        //   }
+        // }
+
+        setLastWinners(res.data.data);
+      });
+  };
+
+  if (lastWinners.length == 0) {
+    setTimeout(() => {
+      getLastWinners();
+    }, 1000);
+  }
+
+  console.log('getLastWinners', lastWinners);
+
   const [winnerState, setWinnerState] = useState('0');
 
   const getResult = async () => {
@@ -171,6 +210,7 @@ export default function TigerVsElephant({route}) {
   };
 
   useEffect(() => {
+    // getLastWinners();
     getGameTime(game_id, userInfo.token)
       .then(res => {
         setGameTime(res.data.data);
@@ -353,7 +393,14 @@ export default function TigerVsElephant({route}) {
           </Animated.View>
         </View>
         <View style={styles.scoreContainer}>
-          <Text style={styles.scoreText}>Last Winner: Tiger</Text>
+          <Text style={styles.scoreText}>
+            Last Winner:{' '}
+            {lastWinners[0]?.game_result == '0'
+              ? 'Tiger'
+              : lastWinners[0]?.game_result == '1'
+              ? 'Elephant'
+              : ''}
+          </Text>
         </View>
         {/* <View style={styles.btnContainer}>
           <Button
