@@ -19,7 +19,6 @@ import {Button, Text} from 'react-native-paper';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import normalize from 'react-native-normalize';
 import SoundPlayer from 'react-native-sound-player';
-// import Sound from 'react-native-sound';
 
 import tiger from '../../assets/tiger.png';
 import elephant from '../../assets/hati_angry.png';
@@ -62,8 +61,6 @@ const coinArray = [
   },
 ];
 
-const buttonArray = [0, 1];
-
 const ANGLE = 10;
 const TIME = 100;
 const EASING = Easing.ease;
@@ -98,8 +95,6 @@ export default function TigerVsElephant({route}) {
   const handlePress = () => {
     getResult();
     setTgrEleState(false);
-    // setTigerState(true);
-    // setElephantState(true);
     rot.value = withSequence(
       // deviate left to start from -ANGLE
       withTiming(-ANGLE_2, {duration: TIME_2 / 2, easing: EASING_2}),
@@ -120,12 +115,7 @@ export default function TigerVsElephant({route}) {
       withRepeat(withTiming(ANGLE, {duration: TIME, easing: EASING}), 5, true),
       withTiming(ANGLE, {duration: TIME, easing: EASING}),
     );
-    // generateRandom();
   };
-  // const [randomNum1, setRandomNum1] = useState(1);
-  // const [randomNum2, setRandomNum2] = useState(1);
-  // const [tigerState, setTigerState] = useState(true);
-  // const [elephantState, setElephantState] = useState(true);
 
   const [lastWinners, setLastWinners] = useState([]);
 
@@ -144,16 +134,6 @@ export default function TigerVsElephant({route}) {
       )
       .then(res => {
         console.log('auirfgsafsa', res.data.data);
-
-        // for (var i = 0; i < res.data.data.length; i++) {
-        //   var gameResultIndex = dataArray[i].game_result;
-        //   if (colorArray[gameResultIndex]) {
-        //     dataArray[i].colour = colorArray[gameResultIndex];
-        //   } else {
-        //     dataArray[i].colour = '#000000'; // Default color if index is not found
-        //   }
-        // }
-
         setLastWinners(res.data.data);
       });
   };
@@ -210,7 +190,6 @@ export default function TigerVsElephant({route}) {
   };
 
   useEffect(() => {
-    // getLastWinners();
     getGameTime(game_id, userInfo.token)
       .then(res => {
         setGameTime(res.data.data);

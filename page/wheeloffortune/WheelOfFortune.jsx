@@ -167,16 +167,6 @@ const WheelOfFortune = ({route}) => {
       )
       .then(res => {
         console.log('auirfgsafsa', res.data.data);
-
-        // for (var i = 0; i < res.data.data.length; i++) {
-        //   var gameResultIndex = dataArray[i].game_result;
-        //   if (colorArray[gameResultIndex]) {
-        //     dataArray[i].colour = colorArray[gameResultIndex];
-        //   } else {
-        //     dataArray[i].colour = '#000000'; // Default color if index is not found
-        //   }
-        // }
-
         setLastWinners(res.data.data);
       })
       .catch(err => {
@@ -255,15 +245,9 @@ const WheelOfFortune = ({route}) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      // if (lastWinners.length == 0) {
-      //   console.log('*******************');
-      //   getLastWinners();
-      // }
       serverFetchedTime();
       setCurrentTime(dateAndTimeArray);
     }, 2000);
-    // getLastWinners();
-
     return () => clearInterval(interval);
   }, []);
 
@@ -321,7 +305,6 @@ const WheelOfFortune = ({route}) => {
           50,
         );
         setCoinAmount(null);
-        // setEntryNumber(null);
       } else {
         ToastAndroid.showWithGravityAndOffset(
           'ADD COIN FIRST!',
@@ -342,20 +325,6 @@ const WheelOfFortune = ({route}) => {
       );
     }
   };
-
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     try {
-  //       getLastWinners();
-  //     } catch (error) {
-  //       console.log('LOLAA ERRR', error);
-  //     }
-  //   }, 2000);
-
-  //   return () => clearInterval(interval);
-  // }, []);
-
-  // getLastWinners();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -432,22 +401,6 @@ const WheelOfFortune = ({route}) => {
                     backgroundColor: item.color,
                   }}></View>
               );
-            })} */}
-            {/* {lastWinners.map((item, index) => {
-              prize.map((prz, i) => {
-                if (parseInt(item.game_result) == parseInt(prz.name)) {
-                  return (
-                    <View
-                      key={i}
-                      style={{
-                        height: normalize(20),
-                        width: normalize(25),
-                        borderRadius: normalize(50),
-                        backgroundColor: prz.color,
-                      }}></View>
-                  );
-                }
-              });
             })} */}
             {lastWinners.map((item, i) => {
               if (parseInt(prize[i].name) == parseInt(item?.game_result)) {
