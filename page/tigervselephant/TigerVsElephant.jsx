@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useMemo, useState} from 'react';
 import Animated, {
   useSharedValue,
   withTiming,
@@ -18,7 +18,6 @@ import {
 import {Button, Text} from 'react-native-paper';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import normalize from 'react-native-normalize';
-import SoundPlayer from 'react-native-sound-player';
 
 import tiger from '../../assets/tiger.png';
 import elephant from '../../assets/hati_angry.png';
@@ -91,10 +90,10 @@ export default function TigerVsElephant({route}) {
     transform: [{rotateZ: `${rot.value}deg`}],
   }));
 
-  const [tgrEleState, setTgrEleState] = useState(() => true);
+  // const [tgrEleState, setTgrEleState] = useState(() => true);
   const handlePress = () => {
     getResult();
-    setTgrEleState(false);
+    // setTgrEleState(false);
     rot.value = withSequence(
       // deviate left to start from -ANGLE
       withTiming(-ANGLE_2, {duration: TIME_2 / 2, easing: EASING_2}),
@@ -138,11 +137,19 @@ export default function TigerVsElephant({route}) {
       });
   };
 
-  if (lastWinners.length == 0) {
-    setTimeout(() => {
-      getLastWinners();
-    }, 1000);
+  if (lastWinners.length === 0) {
+    setTimeout(async () => {
+      if (lastWinners.length === 0) {
+        try {
+          await getLastWinners();
+        } catch (error) {
+          console.log('SET_TIMEOUT - 2000ms', error);
+        }
+      }
+    }, 2000);
   }
+
+  // console.log('lastWinners.length', lastWinners.length);
 
   console.log('getLastWinners', lastWinners);
 
@@ -190,6 +197,7 @@ export default function TigerVsElephant({route}) {
   };
 
   useEffect(() => {
+    serverFetchedTime();
     getGameTime(game_id, userInfo.token)
       .then(res => {
         setGameTime(res.data.data);
@@ -226,19 +234,26 @@ export default function TigerVsElephant({route}) {
   let dateAndTimeArray = serverDateTime.split(' ');
   console.log('CUTTTEEDDDD SERVER TIME', dateAndTimeArray[1]);
 
-  let cutToMinuteServerTime = dateAndTimeArray[1]?.slice(0, 5);
+  const [dt, setDt] = useState(
+    new Date(dateAndTimeArray[1]).toLocaleTimeString(),
+  );
+  // let cutToMinuteServerTime = dateAndTimeArray[1]?.slice(0, 5);
+  // console.log('cutToMinuteServerTime', cutToMinuteServerTime);
+  let cutToMinuteServerTime = dt?.slice(0, 5);
   console.log('cutToMinuteServerTime', cutToMinuteServerTime);
   let cutToMinuteGameTime = gameTime[0]?.game_time?.slice(0, 5);
   console.log('cutToMinuteGameTime', cutToMinuteGameTime);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      serverFetchedTime();
-      setCurrentTime(dateAndTimeArray);
+    const secTimer = setInterval(() => {
+      const currentTime = new Date();
+      setDt(currentTime.toLocaleTimeString());
     }, 2000);
 
-    return () => clearInterval(interval);
+    return () => clearInterval(secTimer);
   }, []);
+
+  console.log('DTDTDTDTDTDTDTTDTDTDTDTTDD', dt.slice(0, 8));
 
   useEffect(() => {
     if (isLive && cutToMinuteGameTime == cutToMinuteServerTime) {
