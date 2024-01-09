@@ -362,7 +362,7 @@ const WheelOfFortune = ({route}) => {
       <LottieView
         ref={lottieRef}
         style={{
-          zIndex: 99,
+          zIndex: -2,
           width: '100%',
           height: '100%',
           position: 'absolute',
