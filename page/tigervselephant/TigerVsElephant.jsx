@@ -146,7 +146,7 @@ export default function TigerVsElephant({route}) {
 
   console.log('getLastWinners', lastWinners);
 
-  const [winnerState, setWinnerState] = useState('0');
+  const [winnerState, setWinnerState] = useState('');
 
   const getResult = async () => {
     await axios
@@ -343,19 +343,33 @@ export default function TigerVsElephant({route}) {
           <TouchableOpacity onPress={() => handleEntryNumberPressed(0)}>
             <Animated.View
               style={[styles.box, animatedStyle, styles.shadowProp]}>
-              <Image
-                source={winnerState == '0' ? tiger : ''}
-                style={{width: 'auto', height: normalize(150)}}
-              />
+              {winnerState == '' ? (
+                <Image
+                  source={tiger}
+                  style={{width: 'auto', height: normalize(150)}}
+                />
+              ) : (
+                <Image
+                  source={winnerState == '0' ? tiger : ''}
+                  style={{width: 'auto', height: normalize(150)}}
+                />
+              )}
             </Animated.View>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => handleEntryNumberPressed(1)}>
             <Animated.View
               style={[styles.box, animatedStyle, styles.shadowProp]}>
-              <Image
-                source={winnerState == '1' ? elephant : ''}
-                style={{width: 'auto', height: normalize(120)}}
-              />
+              {winnerState == '' ? (
+                <Image
+                  source={elephant}
+                  style={{width: 'auto', height: normalize(150)}}
+                />
+              ) : (
+                <Image
+                  source={winnerState == '1' ? elephant : ''}
+                  style={{width: 'auto', height: normalize(120)}}
+                />
+              )}
             </Animated.View>
           </TouchableOpacity>
         </View>
