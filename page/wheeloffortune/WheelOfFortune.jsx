@@ -74,8 +74,6 @@ const prize = [
   {name: '9', color: '#a068e3'},
 ];
 
-const winnerArray = new Array(5);
-
 const SIZE = 270;
 const WheelOfFortune = ({route}) => {
   const {userInfo} = useContext(AuthContext);
@@ -174,10 +172,16 @@ const WheelOfFortune = ({route}) => {
       });
   };
 
-  if (lastWinners.length == 0) {
-    setTimeout(() => {
-      getLastWinners();
-    }, 1000);
+  if (lastWinners.length === 0) {
+    setTimeout(async () => {
+      if (lastWinners.length === 0) {
+        try {
+          await getLastWinners();
+        } catch (error) {
+          console.log('SET_TIMEOUT - 2000ms', error);
+        }
+      }
+    }, 2000);
   }
 
   console.log('getLastWinners', lastWinners);
@@ -201,7 +205,11 @@ const WheelOfFortune = ({route}) => {
   };
 
   useEffect(() => {
-    // getLastWinners();
+    try {
+      serverFetchedTime();
+    } catch (error) {
+      console.log('ERRR_SERVER_FETCHING_TIME', error);
+    }
     getGameTime(game_id, userInfo.token)
       .then(res => {
         setGameTime(res.data.data);
@@ -238,18 +246,26 @@ const WheelOfFortune = ({route}) => {
   let dateAndTimeArray = serverDateTime.split(' ');
   console.log('CUTTTEEDDDD SERVER TIME', dateAndTimeArray[1]);
 
-  let cutToMinuteServerTime = dateAndTimeArray[1]?.slice(0, 5);
+  const [dt, setDt] = useState(
+    new Date(dateAndTimeArray[1]).toLocaleTimeString(),
+  );
+  // let cutToMinuteServerTime = dateAndTimeArray[1]?.slice(0, 5);
+  // console.log('cutToMinuteServerTime', cutToMinuteServerTime);
+  let cutToMinuteServerTime = dt?.slice(0, 5);
   console.log('cutToMinuteServerTime', cutToMinuteServerTime);
   let cutToMinuteGameTime = gameTime[0]?.game_time?.slice(0, 5);
   console.log('cutToMinuteGameTime', cutToMinuteGameTime);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      serverFetchedTime();
-      setCurrentTime(dateAndTimeArray);
+    const secTimer = setInterval(() => {
+      const currentTime = new Date();
+      setDt(currentTime.toLocaleTimeString());
     }, 2000);
-    return () => clearInterval(interval);
+
+    return () => clearInterval(secTimer);
   }, []);
+
+  console.log('DTDTDTDTDTDTDTTDTDTDTDTTDD', dt.slice(0, 8));
 
   useEffect(() => {
     if (isLive && cutToMinuteGameTime == cutToMinuteServerTime) {
@@ -402,26 +418,27 @@ const WheelOfFortune = ({route}) => {
                   }}></View>
               );
             })} */}
-            {lastWinners.map((item, i) => {
-              if (parseInt(prize[i].name) == parseInt(item?.game_result)) {
-                console.log(
-                  'LASTWIIIIIIIII',
-                  prize[i].name,
-                  item.game_result,
-                  prize[i].color,
-                );
-                return (
-                  <View
-                    key={i}
-                    style={{
-                      height: normalize(20),
-                      width: normalize(25),
-                      borderRadius: normalize(50),
-                      backgroundColor: prize[i].color,
-                    }}></View>
-                );
-              }
-            })}
+            {lastWinners.length !== 0 &&
+              lastWinners.map((item, i) => {
+                if (parseInt(prize[i].name) == parseInt(item?.game_result)) {
+                  console.log(
+                    'LASTWIIIIIIIII',
+                    prize[i].name,
+                    item.game_result,
+                    prize[i].color,
+                  );
+                  return (
+                    <View
+                      key={i}
+                      style={{
+                        height: normalize(20),
+                        width: normalize(25),
+                        borderRadius: normalize(50),
+                        backgroundColor: prize[i].color,
+                      }}></View>
+                  );
+                }
+              })}
           </View>
         </View>
         <View>
