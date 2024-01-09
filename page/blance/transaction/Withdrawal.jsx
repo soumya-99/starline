@@ -14,7 +14,7 @@ import TransComp from '../../../component/trans_component/TransComp';
 const data = [
   { label: 'Google Pay UPI', value: '1' },
   { label: 'PhonePe UPI', value: '2' },
-  { label: 'Amazon Pay UPI', value: '3' },
+  { label: 'PayTM UPI', value: '3' },
 ];
 
 const Withdrawal = ({ navigation }) => {

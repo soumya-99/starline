@@ -82,7 +82,7 @@ const CoinReauestBanner = () => {
             style={styles.image}
           />
           <Image
-            source={require('../../assets/icon/amazonpay.png')}
+            source={require('../../assets/icon/paytm.png')}
             resizeMode="contain"
             style={styles.image}
           />
