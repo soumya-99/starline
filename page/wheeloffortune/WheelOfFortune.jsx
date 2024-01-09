@@ -11,6 +11,11 @@ import {
 import React, {useContext, useEffect, useRef, useState} from 'react';
 
 import SoundPlayer from 'react-native-sound-player';
+import LottieView from 'lottie-react-native';
+import ConfettiCannon from 'react-native-confetti-cannon';
+
+import anim2 from './bee_anim.json';
+import anim1 from './confetti_animation.json';
 
 import {GoGoSpin} from 'react-native-gogo-spin';
 
@@ -77,6 +82,7 @@ const prize = [
 const SIZE = 270;
 const WheelOfFortune = ({route}) => {
   const {userInfo} = useContext(AuthContext);
+  const lottieRef = useRef(null);
   const spinRef = useRef(null);
   const [prizeIdx, setprizeIdx] = useState(-1);
 
@@ -146,6 +152,7 @@ const WheelOfFortune = ({route}) => {
 
   const onEndSpin = endSuccess => {
     console.log('endSuccess', endSuccess);
+    lottieRef.current?.play();
   };
 
   const [lastWinners, setLastWinners] = useState([]);
@@ -352,6 +359,18 @@ const WheelOfFortune = ({route}) => {
       <View style={{flex: 1}}>
         <TitleBar />
       </View>
+      <LottieView
+        ref={lottieRef}
+        style={{
+          zIndex: 99,
+          width: '100%',
+          height: '100%',
+          position: 'absolute',
+        }}
+        source={anim1}
+        // autoPlay
+        // loop
+      />
       <ScrollView>
         <View style={styles.rowContainer}>
           {/* <Text style={styles.prizeText}>
