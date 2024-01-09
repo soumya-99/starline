@@ -18,6 +18,7 @@ import {
 import {Button, Text} from 'react-native-paper';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import normalize from 'react-native-normalize';
+import SoundPlayer from 'react-native-sound-player';
 
 import tiger from '../../assets/tiger.png';
 import elephant from '../../assets/hati_angry.png';
@@ -94,6 +95,8 @@ export default function TigerVsElephant({route}) {
   const handlePress = async () => {
     try {
       await getResult();
+
+      // console.log('winnerState|winnerState|winnerState', winnerState);
     } catch (error) {
       ToastAndroid.showWithGravityAndOffset(
         'Error during fetching results.',
@@ -182,6 +185,27 @@ export default function TigerVsElephant({route}) {
       .then(res => {
         console.log(res.data.data[0].game_result);
         setWinnerState(res.data.data[0].game_result);
+
+        // Playing sound
+        if (res.data.data[0].game_result == '0') {
+          try {
+            SoundPlayer.playSoundFile('tiger1', 'mp3');
+          } catch (e) {
+            console.log(`cannot play the sound file and err in server.`, e);
+          }
+        } else if (res.data.data[0].game_result == '1') {
+          try {
+            SoundPlayer.playSoundFile('elephant1', 'mp3');
+          } catch (e) {
+            console.log(`cannot play the sound file and err in server.`, e);
+          }
+        } else {
+          try {
+            SoundPlayer.playSoundFile('draw1', 'mp3');
+          } catch (e) {
+            console.log(`cannot play the sound file and err in server.`, e);
+          }
+        }
       })
       .catch(err => {
         console.log('EEEERRRRRRRRRR', err);
@@ -245,10 +269,18 @@ export default function TigerVsElephant({route}) {
   console.log('CUTTTEEDDDD SERVER TIME', dateAndTimeArray[1]);
 
   const [dt, setDt] = useState(
-    new Date(dateAndTimeArray[1]).toLocaleTimeString(),
+    new Date(dateAndTimeArray[1]).toLocaleTimeString('en-US', {hour12: false}),
   );
   // let cutToMinuteServerTime = dateAndTimeArray[1]?.slice(0, 5);
   // console.log('cutToMinuteServerTime', cutToMinuteServerTime);
+  // 1:32:01 -> 7
+  // 12:21:04 -> 8
+  // let cutToMinuteServerTime;
+  // if (dt.length === 8) {
+  //   cutToMinuteServerTime = dt?.slice(0, 5);
+  // } else {
+  //   cutToMinuteServerTime = dt?.slice(0, 4);
+  // }
   let cutToMinuteServerTime = dt?.slice(0, 5);
   console.log('cutToMinuteServerTime', cutToMinuteServerTime);
   let cutToMinuteGameTime = gameTime[0]?.game_time?.slice(0, 5);
@@ -257,7 +289,7 @@ export default function TigerVsElephant({route}) {
   useEffect(() => {
     const secTimer = setInterval(() => {
       const currentTime = new Date();
-      setDt(currentTime.toLocaleTimeString());
+      setDt(currentTime.toLocaleTimeString('en-US', {hour12: false}));
     }, 2000);
 
     return () => clearInterval(secTimer);
@@ -401,12 +433,16 @@ export default function TigerVsElephant({route}) {
         <View style={styles.bigCoinsContainer}>
           <Animated.View style={[animStyle]}>
             <ImageBackground source={coinR} style={styles.bigCoin}>
-              <Text style={styles.bigCoinText}>{winnerState}</Text>
+              <Text style={styles.bigCoinText}>
+                {winnerState == '0' && 'T'}
+              </Text>
             </ImageBackground>
           </Animated.View>
           <Animated.View style={[animStyle]}>
             <ImageBackground source={coinB} style={styles.bigCoin}>
-              <Text style={styles.bigCoinText}>{winnerState}</Text>
+              <Text style={styles.bigCoinText}>
+                {winnerState == '1' && 'E'}
+              </Text>
             </ImageBackground>
           </Animated.View>
         </View>

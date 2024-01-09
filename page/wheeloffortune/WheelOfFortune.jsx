@@ -247,11 +247,16 @@ const WheelOfFortune = ({route}) => {
   console.log('CUTTTEEDDDD SERVER TIME', dateAndTimeArray[1]);
 
   const [dt, setDt] = useState(
-    new Date(dateAndTimeArray[1]).toLocaleTimeString(),
+    new Date(dateAndTimeArray[1]).toLocaleTimeString('en-US', {hour12: false}),
   );
   // let cutToMinuteServerTime = dateAndTimeArray[1]?.slice(0, 5);
   // console.log('cutToMinuteServerTime', cutToMinuteServerTime);
-  let cutToMinuteServerTime = dt?.slice(0, 5);
+  let cutToMinuteServerTime;
+  if (dt.length === 8) {
+    cutToMinuteServerTime = dt?.slice(0, 5);
+  } else {
+    cutToMinuteServerTime = dt?.slice(0, 4);
+  }
   console.log('cutToMinuteServerTime', cutToMinuteServerTime);
   let cutToMinuteGameTime = gameTime[0]?.game_time?.slice(0, 5);
   console.log('cutToMinuteGameTime', cutToMinuteGameTime);
@@ -259,7 +264,7 @@ const WheelOfFortune = ({route}) => {
   useEffect(() => {
     const secTimer = setInterval(() => {
       const currentTime = new Date();
-      setDt(currentTime.toLocaleTimeString());
+      setDt(currentTime.toLocaleTimeString('en-US', {hour12: false}));
     }, 2000);
 
     return () => clearInterval(secTimer);
