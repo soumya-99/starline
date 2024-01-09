@@ -91,8 +91,18 @@ export default function TigerVsElephant({route}) {
   }));
 
   // const [tgrEleState, setTgrEleState] = useState(() => true);
-  const handlePress = () => {
-    getResult();
+  const handlePress = async () => {
+    try {
+      await getResult();
+    } catch (error) {
+      ToastAndroid.showWithGravityAndOffset(
+        'Error during fetching results.',
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER,
+        25,
+        50,
+      );
+    }
     // setTgrEleState(false);
     rot.value = withSequence(
       // deviate left to start from -ANGLE
@@ -305,7 +315,7 @@ export default function TigerVsElephant({route}) {
       if (coinAmount != null) {
         console.log('ewuriwetttttgyetwuirtfrs', entryNumObj);
         await sendBidData(entryNumObj);
-        await getResult();
+        // await getResult();
         console.log('RRRRRRWWWWSSDHBFCFWSGVXDDVC', winnerState);
         ToastAndroid.showWithGravityAndOffset(
           'Bidding Done!',
