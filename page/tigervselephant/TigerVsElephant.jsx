@@ -130,6 +130,7 @@ export default function TigerVsElephant({route}) {
   };
 
   const [lastWinners, setLastWinners] = useState([]);
+  const [lastWinnersStatus, setLastWinnersStatus] = useState(false);
 
   const getLastWinners = async () => {
     await axios
@@ -147,17 +148,32 @@ export default function TigerVsElephant({route}) {
       .then(res => {
         console.log('auirfgsafsa', res.data.data);
         setLastWinners(res.data.data);
+        setLastWinnersStatus(res.data.status);
       });
   };
 
-  if (lastWinners.length === 0) {
+  // if (lastWinners.length === 0) {
+  //   setTimeout(async () => {
+  //     if (lastWinners.length === 0) {
+  //       try {
+  //         await getLastWinners();
+  //       } catch (error) {
+  //         console.log('SET_TIMEOUT - 2000ms', error);
+  //       }
+  //     }
+  //   }, 2000);
+  // }
+
+  if (lastWinnersStatus === false) {
     setTimeout(async () => {
-      if (lastWinners.length === 0) {
-        try {
-          await getLastWinners();
-        } catch (error) {
-          console.log('SET_TIMEOUT - 2000ms', error);
-        }
+      try {
+        await getLastWinners();
+        console.log(
+          'lastWinnersStatus await getLastWinners()====>',
+          lastWinnersStatus,
+        );
+      } catch (error) {
+        console.log('SET_TIMEOUT - 2000ms tgr', error);
       }
     }, 2000);
   }
@@ -185,7 +201,6 @@ export default function TigerVsElephant({route}) {
       .then(res => {
         console.log(res.data.data[0].game_result);
         setWinnerState(res.data.data[0].game_result);
-
         // Playing sound
         if (res.data.data[0].game_result == '0') {
           try {

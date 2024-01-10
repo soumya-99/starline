@@ -156,6 +156,7 @@ const WheelOfFortune = ({route}) => {
   };
 
   const [lastWinners, setLastWinners] = useState([]);
+  const [lastWinnersStatus, setLastWinnersStatus] = useState(false);
 
   const getLastWinners = async () => {
     await axios
@@ -172,6 +173,7 @@ const WheelOfFortune = ({route}) => {
       )
       .then(res => {
         console.log('auirfgsafsa', res.data.data);
+        setLastWinnersStatus(res.data.status);
         setLastWinners(res.data.data);
       })
       .catch(err => {
@@ -179,19 +181,33 @@ const WheelOfFortune = ({route}) => {
       });
   };
 
-  if (lastWinners.length === 0) {
+  // if (lastWinners.length === 0) {
+  //   setTimeout(async () => {
+  //     if (lastWinners.length === 0) {
+  //       try {
+  //         await getLastWinners();
+  //       } catch (error) {
+  //         console.log('SET_TIMEOUT - 2000ms', error);
+  //       }
+  //     }
+  //   }, 2000);
+  // }
+
+  if (lastWinnersStatus === false) {
     setTimeout(async () => {
-      if (lastWinners.length === 0) {
-        try {
-          await getLastWinners();
-        } catch (error) {
-          console.log('SET_TIMEOUT - 2000ms', error);
-        }
+      try {
+        await getLastWinners();
+        console.log(
+          'lastWinnersStatus await getLastWinners()====>',
+          lastWinnersStatus,
+        );
+      } catch (error) {
+        console.log('SET_TIMEOUT - 2000ms whl', error);
       }
     }, 2000);
   }
 
-  console.log('getLastWinners', lastWinners);
+  console.log('lastWinners', lastWinners);
 
   const [serverDateTime, setServerDateTime] = useState(() => '');
 
