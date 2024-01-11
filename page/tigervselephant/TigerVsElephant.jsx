@@ -305,7 +305,7 @@ export default function TigerVsElephant({route}) {
     const secTimer = setInterval(() => {
       const currentTime = new Date();
       setDt(currentTime.toLocaleTimeString('en-US', {hour12: false}));
-    }, 2000);
+    }, 1000);
 
     return () => clearInterval(secTimer);
   }, []);
@@ -482,9 +482,24 @@ export default function TigerVsElephant({route}) {
             }}
             buttonColor="orange"
             textColor="black">
-            START GAME
+            <Text>START GAME</Text>
           </Button>
         </View> */}
+        <View
+          style={{
+            marginBottom: -20,
+            padding: 10,
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+          }}>
+          <Text style={{fontWeight: '700', fontSize: normalize(18)}}>
+            NEXT GAME IN: {gameTime[0]?.game_time}
+          </Text>
+          <Text style={{fontWeight: '700', fontSize: normalize(18)}}>
+            NOW: {dt.slice(0, 8)}
+          </Text>
+          {/* <Text></Text> */}
+        </View>
         <View
           style={{
             marginTop: normalize(60),

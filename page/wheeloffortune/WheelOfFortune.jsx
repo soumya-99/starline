@@ -288,7 +288,7 @@ const WheelOfFortune = ({route}) => {
     const secTimer = setInterval(() => {
       const currentTime = new Date();
       setDt(currentTime.toLocaleTimeString('en-US', {hour12: false}));
-    }, 2000);
+    }, 1000);
 
     return () => clearInterval(secTimer);
   }, []);
@@ -374,6 +374,31 @@ const WheelOfFortune = ({route}) => {
     <SafeAreaView style={styles.container}>
       <View style={{flex: 1}}>
         <TitleBar />
+      </View>
+      <View
+        style={{
+          marginBottom: -30,
+          padding: 10,
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+        }}>
+        <Text
+          style={{
+            fontWeight: '700',
+            fontSize: normalize(18),
+            color: '#ffffff',
+          }}>
+          NEXT GAME IN: {gameTime[0]?.game_time}
+        </Text>
+        <Text
+          style={{
+            fontWeight: '700',
+            fontSize: normalize(18),
+            color: '#ffffff',
+          }}>
+          NOW: {dt.slice(0, 8)}
+        </Text>
+        {/* <Text></Text> */}
       </View>
       <LottieView
         ref={lottieRef}
@@ -471,11 +496,22 @@ const WheelOfFortune = ({route}) => {
                     <View
                       key={i}
                       style={{
-                        height: normalize(20),
-                        width: normalize(25),
+                        height: normalize(25),
+                        width: normalize(30),
                         borderRadius: normalize(50),
+                        justifyContent: 'center',
+                        alignItems: 'center',
                         backgroundColor: prize[i].color,
-                      }}></View>
+                      }}>
+                      <Text
+                        style={{
+                          textAlign: 'center',
+                          color: 'white',
+                          fontWeight: '600',
+                        }}>
+                        {prize[i].name}
+                      </Text>
+                    </View>
                   );
                 }
               })}
