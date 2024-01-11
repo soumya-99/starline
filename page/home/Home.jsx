@@ -30,6 +30,7 @@ import {Button} from 'react-native-paper';
 import GameListCustom2 from '../../component/GameListCustom2';
 import logoFF from '../../assets/kolkataff-removebg-preview.png';
 import logoWOF from '../../assets/whloffortun-2-removebg-preview.png';
+import logoTgr from '../../assets/tgrele.png';
 
 const Home = ({navigation}) => {
   const isFocused = useIsFocused();
@@ -393,7 +394,7 @@ const Home = ({navigation}) => {
                       }
                       bgColor="#3d0024"
                       textColor="#ffd8e8"
-                      img={logoFF}
+                      img={logoTgr}
                     />
                   ) : item.game_flag == 'SP' ? (
                     <GameListCustom2
