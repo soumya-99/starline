@@ -128,7 +128,7 @@ const Registar = ({navigation}) => {
         <View style={authstyles.main}>
           <View style={authstyles.container}>
             <Image
-              source={require('../../assets/logo/Star-Line__2.png')}
+              source={require('../../assets/logo/superwin.png')}
               style={{width: logoWidth, height: logoHeight}}
               resizeMode="contain"
             />
