@@ -76,10 +76,10 @@ export default function TigerVsElephant({route}) {
   const {getGameTime} = handleGetGameTime();
   const {game_id, item} = route.params;
 
+  const [currentTime, setCurrentTime] = useState('');
+
   const [coinAmount, setCoinAmount] = useState(null);
   const [entryNumber, setEntryNumber] = useState(null);
-
-  const [dt, setDt] = useState();
 
   // =================== Animation Starts ===================
   const rotation = useSharedValue(0);
@@ -137,7 +137,7 @@ export default function TigerVsElephant({route}) {
       .post(
         `${BASE_URL}/today_others_result_list`,
         {
-          game_id: gameTime[0]?.game_id,
+          game_id: futureGame,
         },
         {
           headers: {
@@ -189,7 +189,7 @@ export default function TigerVsElephant({route}) {
       .post(
         `${BASE_URL}/others_result`,
         {
-          game_id: gameTime[0].game_id,
+          game_id: futureGame,
           game_flag: item?.game_flag,
         },
         {
@@ -239,16 +239,6 @@ export default function TigerVsElephant({route}) {
         })
         .then(res => {
           setServerDateTime(res.data.date_time);
-
-          // returns [date, time] in this format
-          let dateAndTimeArray = res.data.date_time.split(' ');
-          console.log('CUTTTEEDDDD SERVER TIME', dateAndTimeArray[1]);
-
-          setDt(
-            new Date(dateAndTimeArray[1]).toLocaleTimeString('en-US', {
-              hour12: false,
-            }),
-          );
         });
     } catch (error) {
       console.log('ERRR', error);
@@ -265,38 +255,37 @@ export default function TigerVsElephant({route}) {
       .catch(error => console.error(error));
   }, [isFocused]);
 
-  let nGTime = '';
   const findFutureGame = () => {
     for (let i = 0; i < gameTime?.length; i++) {
       const checkgameTime = gameTime[i].game_time;
       // console.log(checkgameTime,currentTime,"\n")
-      nGTime = checkgameTime;
-      console.log('checkgameTime, dt', checkgameTime, dt);
-      if (checkgameTime > dt) {
-        console.log('}}}}}}}}}}', gameTime[i].game_id);
+      if (checkgameTime > currentTime) {
         return gameTime[i].game_id;
       }
     }
     return null; // Return null if no future game is found
   };
 
-  console.log('serverDateTime', serverDateTime);
+  console.log('qwertyuioppadjdsafskdgsufgvbs', serverDateTime);
 
   // future game ID
   const futureGame = findFutureGame();
-  console.log('futureGame', futureGame);
+  console.log('qwertyuioppadjdsafskdgsufgvbsdsarfsedfrgtr', futureGame);
 
   // Live starting Time boolean
-  // const isLive = futureGame != null && futureGame == gameTime[0].game_id;
-  // console.log('isLive', isLive);
+  const isLive = futureGame != null && futureGame == gameTime[0].game_id;
+  console.log('isLive', isLive);
 
   // Game starting time
   console.log('gameTime.game_time', gameTime[0]?.game_time);
-  console.log('gameTime[0].game_id', gameTime[0]?.game_id);
 
-  // const [dt, setDt] = useState(
-  //   new Date(dateAndTimeArray[1]).toLocaleTimeString('en-US', {hour12: false}),
-  // );
+  // returns [date, time] in this format
+  let dateAndTimeArray = serverDateTime.split(' ');
+  console.log('CUTTTEEDDDD SERVER TIME', dateAndTimeArray[1]);
+
+  const [dt, setDt] = useState(
+    new Date(dateAndTimeArray[1]).toLocaleTimeString('en-US', {hour12: false}),
+  );
   // let cutToMinuteServerTime = dateAndTimeArray[1]?.slice(0, 5);
   // console.log('cutToMinuteServerTime', cutToMinuteServerTime);
   // 1:32:01 -> 7
@@ -309,8 +298,7 @@ export default function TigerVsElephant({route}) {
   // }
   let cutToMinuteServerTime = dt?.slice(0, 5);
   console.log('cutToMinuteServerTime', cutToMinuteServerTime);
-  // let cutToMinuteGameTime = gameTime[0]?.game_time?.slice(0, 5);
-  let cutToMinuteGameTime = nGTime?.slice(0, 5);
+  let cutToMinuteGameTime = gameTime[0]?.game_time?.slice(0, 5);
   console.log('cutToMinuteGameTime', cutToMinuteGameTime);
 
   useEffect(() => {
@@ -322,35 +310,23 @@ export default function TigerVsElephant({route}) {
     return () => clearInterval(secTimer);
   }, []);
 
-  // console.log('DTDTDTDTDTDTDTTDTDTDTDTTDD', dt.slice(0, 8));
+  console.log('DTDTDTDTDTDTDTTDTDTDTDTTDD', dt.slice(0, 8));
 
-  // useEffect(() => {
-  //   if (isLive && cutToMinuteGameTime == cutToMinuteServerTime) {
-  //     console.log('TRIGGEREED!!!!!');
-  //     handlePress();
-  //   }
-  // }, [cutToMinuteServerTime]);
   useEffect(() => {
-    if (cutToMinuteGameTime == cutToMinuteServerTime) {
+    if (isLive && cutToMinuteGameTime == cutToMinuteServerTime) {
       console.log('TRIGGEREED!!!!!');
       handlePress();
     }
   }, [cutToMinuteServerTime]);
 
   const sendBidData = async entryNumObj => {
-    // console.log('{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{', {
-    //   game_id: gameTime[0].game_id,
-    //   game_entry_number: parseInt(entryNumObj),
-    //   game_amt: coinAmount,
-    //   game_flag: item?.game_flag,
-    // });
     await axios
       .post(
         `${BASE_URL}/add_bid_others`,
         {
           data: [
             {
-              game_id: gameTime[0].game_id,
+              game_id: futureGame,
               game_entry_number: parseInt(entryNumObj),
               game_amt: coinAmount,
               game_flag: item?.game_flag,
@@ -517,11 +493,10 @@ export default function TigerVsElephant({route}) {
             justifyContent: 'space-around',
           }}>
           <Text style={{fontWeight: '700', fontSize: normalize(18)}}>
-            {/* NEXT GAME IN: {gameTime[0]?.game_time} */}
-            NEXT GAME IN: {nGTime}
+            NEXT GAME IN: {gameTime[0]?.game_time}
           </Text>
           <Text style={{fontWeight: '700', fontSize: normalize(18)}}>
-            NOW: {dt}
+            NOW: {dt.slice(0, 8)}
           </Text>
           {/* <Text></Text> */}
         </View>
