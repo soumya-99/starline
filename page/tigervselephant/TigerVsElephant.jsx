@@ -72,12 +72,17 @@ const EASING_2 = Easing.elastic(1.5);
 export default function TigerVsElephant({route}) {
   const {userInfo} = useContext(AuthContext);
   const isFocused = useIsFocused();
-  const [gameTime, setGameTime] = useState([]);
+  const [gameTimeArrayData, setGameTimeArrayData] = useState([]);
   const {getGameTime} = handleGetGameTime();
   const {game_id, item} = route.params;
 
+  const [currentGameInfo, setCurrentGameInfo] = useState(() => {});
   const [coinAmount, setCoinAmount] = useState(null);
   const [entryNumber, setEntryNumber] = useState(null);
+  const [winnerState, setWinnerState] = useState('');
+  const [lastWinners, setLastWinners] = useState([]);
+  const [lastWinnersStatus, setLastWinnersStatus] = useState(false);
+  const [serverDateTime, setServerDateTime] = useState(() => '');
 
   const [dt, setDt] = useState();
 
@@ -129,15 +134,12 @@ export default function TigerVsElephant({route}) {
     );
   };
 
-  const [lastWinners, setLastWinners] = useState([]);
-  const [lastWinnersStatus, setLastWinnersStatus] = useState(false);
-
   const getLastWinners = async () => {
     await axios
       .post(
         `${BASE_URL}/today_others_result_list`,
         {
-          game_id: gameTime[0]?.game_id,
+          game_id: gameTimeArrayData[0]?.game_id,
         },
         {
           headers: {
@@ -146,23 +148,11 @@ export default function TigerVsElephant({route}) {
         },
       )
       .then(res => {
-        console.log('auirfgsafsa', res.data.data);
+        console.log('getLastWinners', res.data.data);
         setLastWinners(res.data.data);
         setLastWinnersStatus(res.data.status);
       });
   };
-
-  // if (lastWinners.length === 0) {
-  //   setTimeout(async () => {
-  //     if (lastWinners.length === 0) {
-  //       try {
-  //         await getLastWinners();
-  //       } catch (error) {
-  //         console.log('SET_TIMEOUT - 2000ms', error);
-  //       }
-  //     }
-  //   }, 2000);
-  // }
 
   if (lastWinnersStatus === false) {
     setTimeout(async () => {
@@ -182,14 +172,12 @@ export default function TigerVsElephant({route}) {
 
   console.log('getLastWinners', lastWinners);
 
-  const [winnerState, setWinnerState] = useState('');
-
   const getResult = async () => {
     await axios
       .post(
         `${BASE_URL}/others_result`,
         {
-          game_id: gameTime[0].game_id,
+          game_id: gameTimeArrayData[0].game_id,
           game_flag: item?.game_flag,
         },
         {
@@ -227,8 +215,6 @@ export default function TigerVsElephant({route}) {
       });
   };
 
-  const [serverDateTime, setServerDateTime] = useState(() => '');
-
   const serverFetchedTime = async () => {
     try {
       await axios
@@ -257,30 +243,68 @@ export default function TigerVsElephant({route}) {
 
   useEffect(() => {
     serverFetchedTime();
-    getGameTime(game_id, userInfo.token)
-      .then(res => {
-        setGameTime(res.data.data);
-        console.log('hsdiufyisdutgrgsfrsdgy', res.data.data);
-      })
-      .catch(error => console.error(error));
+    const fetchGameTimeData = async () => {
+      try {
+        await getGameTime(game_id, userInfo.token)
+          .then(res => {
+            setGameTimeArrayData(res.data?.data);
+            console.log('fetchGameTimeData', res.data?.data);
+          })
+          .catch(err => {
+            console.log('fetchGameTimeData X==X ERR CATCH', err);
+          });
+      } catch (error) {
+        console.log('fetchGameTimeData trycatch - ERR', error);
+      }
+    };
+    fetchGameTimeData();
   }, [isFocused]);
+
+  const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
   let nGTime = '';
   const findFutureGame = () => {
-    for (let i = 0; i < gameTime?.length; i++) {
-      const checkgameTime = gameTime[i].game_time;
-      // console.log(checkgameTime,currentTime,"\n")
+    // for (let i = 0; i < gameTimeArrayData?.length; i++) {
+    //   const checkgameTime = gameTimeArrayData[i].game_time;
+    //   // console.log(checkgameTime,currentTime,"\n")
+    //   nGTime = checkgameTime;
+    //   console.log('checkgameTime, dt', checkgameTime, dt);
+    //   if (checkgameTime > dt) {
+    //     if (currentGameInfo?.game_id != gameTimeArrayData[i].game_id) {
+    //       setCurrentGameInfo(gameTimeArrayData[i]);
+    //     }
+    //     console.log('}}}}}}}}}}', gameTimeArrayData[i].game_id);
+    //     return gameTimeArrayData[i].game_id;
+    //   }
+    // }
+
+    for (const gameData of gameTimeArrayData ?? []) {
+      const checkgameTime = gameData.game_time;
       nGTime = checkgameTime;
       console.log('checkgameTime, dt', checkgameTime, dt);
+
       if (checkgameTime > dt) {
-        console.log('}}}}}}}}}}', gameTime[i].game_id);
-        return gameTime[i].game_id;
+        console.log('jfhg xdfjgj dfjghjkdfxh');
+
+        if (
+          currentGameInfo?.game_id !== gameData.game_id ||
+          currentGameInfo?.length == 0
+        ) {
+          console.log(
+            'oooooooooooooooooooooooooooooooooo',
+            currentGameInfo?.game_id,
+          );
+          setCurrentGameInfo(gameData);
+        }
+        console.log('}}}}}}}}}}', gameData.game_id);
+        return gameData.game_id;
       }
     }
     return null; // Return null if no future game is found
   };
 
   console.log('serverDateTime', serverDateTime);
+  console.log('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz', currentGameInfo);
 
   // future game ID
   const futureGame = findFutureGame();
@@ -291,8 +315,8 @@ export default function TigerVsElephant({route}) {
   // console.log('isLive', isLive);
 
   // Game starting time
-  console.log('gameTime.game_time', gameTime[0]?.game_time);
-  console.log('gameTime[0].game_id', gameTime[0]?.game_id);
+  console.log('gameTime.game_time', gameTimeArrayData[0]?.game_time);
+  console.log('gameTime[0].game_id', gameTimeArrayData[0]?.game_id);
 
   // const [dt, setDt] = useState(
   //   new Date(dateAndTimeArray[1]).toLocaleTimeString('en-US', {hour12: false}),
@@ -301,7 +325,7 @@ export default function TigerVsElephant({route}) {
   // console.log('cutToMinuteServerTime', cutToMinuteServerTime);
   // 1:32:01 -> 7
   // 12:21:04 -> 8
-  // let cutToMinuteServerTime;
+  // let cutToMinuteServerTime
   // if (dt.length === 8) {
   //   cutToMinuteServerTime = dt?.slice(0, 5);
   // } else {
@@ -310,7 +334,7 @@ export default function TigerVsElephant({route}) {
   let cutToMinuteServerTime = dt?.slice(0, 5);
   console.log('cutToMinuteServerTime', cutToMinuteServerTime);
   // let cutToMinuteGameTime = gameTime[0]?.game_time?.slice(0, 5);
-  let cutToMinuteGameTime = nGTime?.slice(0, 5);
+  let cutToMinuteGameTime = currentGameInfo?.game_time?.slice(0, 5);
   console.log('cutToMinuteGameTime', cutToMinuteGameTime);
 
   useEffect(() => {
@@ -330,6 +354,7 @@ export default function TigerVsElephant({route}) {
   //     handlePress();
   //   }
   // }, [cutToMinuteServerTime]);
+
   useEffect(() => {
     if (cutToMinuteGameTime == cutToMinuteServerTime) {
       console.log('TRIGGEREED!!!!!');
@@ -350,7 +375,7 @@ export default function TigerVsElephant({route}) {
         {
           data: [
             {
-              game_id: gameTime[0].game_id,
+              game_id: gameTimeArrayData[0].game_id,
               game_entry_number: parseInt(entryNumObj),
               game_amt: coinAmount,
               game_flag: item?.game_flag,
