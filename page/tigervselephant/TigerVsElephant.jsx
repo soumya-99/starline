@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Animated, {
   useSharedValue,
   withTiming,
@@ -15,8 +15,8 @@ import {
   ToastAndroid,
   Alert,
 } from 'react-native';
-import {Button, Text} from 'react-native-paper';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import { Button, Text } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import normalize from 'react-native-normalize';
 import SoundPlayer from 'react-native-sound-player';
 
@@ -30,13 +30,13 @@ import coinB from '../../assets/coin-blu-2-rem.png';
 import coinG from '../../assets/coinG-removebg-preview-removebg-preview.png';
 import coinBlk from '../../assets/coinBlk-removebg-preview.png';
 import coinO from '../../assets/coinO-removebg-preview.png';
-import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import TitleBar from '../../component/titlebar/TitleBar';
-import {useIsFocused} from '@react-navigation/native';
+import { useIsFocused } from '@react-navigation/native';
 import handleGetGameTime from '../../hooks/controller/Game/handleGetGameTime';
-import {AuthContext} from '../../src/context/AuthContext';
+import { AuthContext } from '../../src/context/AuthContext';
 import axios from 'axios';
-import {BASE_URL} from '../../src/config';
+import { BASE_URL } from '../../src/config';
 
 const coinArray = [
   {
@@ -68,15 +68,16 @@ const EASING = Easing.ease;
 const ANGLE_2 = 20;
 const TIME_2 = 90;
 const EASING_2 = Easing.elastic(1.5);
+var secTimer;
 
-export default function TigerVsElephant({route}) {
-  const {userInfo} = useContext(AuthContext);
+export default function TigerVsElephant({ route }) {
+  const { userInfo } = useContext(AuthContext);
   const isFocused = useIsFocused();
   const [gameTimeArrayData, setGameTimeArrayData] = useState([]);
-  const {getGameTime} = handleGetGameTime();
-  const {game_id, item} = route.params;
+  const { getGameTime } = handleGetGameTime();
+  const { game_id, item } = route.params;
 
-  const [currentGameInfo, setCurrentGameInfo] = useState(() => {});
+  const [currentGameInfo, setCurrentGameInfo] = useState(() => { });
   const [coinAmount, setCoinAmount] = useState(null);
   const [entryNumber, setEntryNumber] = useState(null);
   const [winnerState, setWinnerState] = useState('');
@@ -89,11 +90,11 @@ export default function TigerVsElephant({route}) {
   // =================== Animation Starts ===================
   const rotation = useSharedValue(0);
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{rotateY: `${rotation.value * 360}deg`}],
+    transform: [{ rotateY: `${rotation.value * 360}deg` }],
   }));
   const rot = useSharedValue(0);
   const animStyle = useAnimatedStyle(() => ({
-    transform: [{rotateZ: `${rot.value}deg`}],
+    transform: [{ rotateZ: `${rot.value}deg` }],
   }));
 
   // const [tgrEleState, setTgrEleState] = useState(() => true);
@@ -114,7 +115,7 @@ export default function TigerVsElephant({route}) {
     // setTgrEleState(false);
     rot.value = withSequence(
       // deviate left to start from -ANGLE
-      withTiming(-ANGLE_2, {duration: TIME_2 / 2, easing: EASING_2}),
+      withTiming(-ANGLE_2, { duration: TIME_2 / 2, easing: EASING_2 }),
       // wobble between -ANGLE and ANGLE 7 times
       withRepeat(
         withTiming(ANGLE_2, {
@@ -125,13 +126,29 @@ export default function TigerVsElephant({route}) {
         true,
       ),
       // go back to 0 at the end
-      withTiming(0, {duration: TIME_2 / 2, easing: EASING_2}),
+      withTiming(0, { duration: TIME_2 / 2, easing: EASING_2 }),
     );
     rotation.value = withSequence(
-      withTiming(-ANGLE, {duration: TIME, easing: EASING}),
-      withRepeat(withTiming(ANGLE, {duration: TIME, easing: EASING}), 5, true),
-      withTiming(ANGLE, {duration: TIME, easing: EASING}),
+      withTiming(-ANGLE, { duration: TIME, easing: EASING }),
+      withRepeat(withTiming(ANGLE, { duration: TIME, easing: EASING }), 5, true),
+      withTiming(ANGLE, { duration: TIME, easing: EASING }),
     );
+
+
+    await delaysetData(20);
+
+
+    setWinnerState('');
+    setInterval(() => {
+      const currentTime = new Date();
+      setDt(currentTime.toLocaleTimeString('en-US', { hour12: false }));
+    }, 1000);
+  };
+
+  const delaysetData = async (seconds) => {
+    return new Promise(resolve => {
+      setTimeout(resolve, seconds * 1000);
+  });
   };
 
   const getLastWinners = async () => {
@@ -264,6 +281,7 @@ export default function TigerVsElephant({route}) {
 
   let nGTime = '';
   const findFutureGame = () => {
+    console.log("/////////////////////////////////")
     // for (let i = 0; i < gameTimeArrayData?.length; i++) {
     //   const checkgameTime = gameTimeArrayData[i].game_time;
     //   // console.log(checkgameTime,currentTime,"\n")
@@ -281,22 +299,19 @@ export default function TigerVsElephant({route}) {
     for (const gameData of gameTimeArrayData ?? []) {
       const checkgameTime = gameData.game_time;
       nGTime = checkgameTime;
-      console.log('checkgameTime, dt', checkgameTime, dt);
+      // console.log('checkgameTime, dt', checkgameTime, dt);
 
       if (checkgameTime > dt) {
-        console.log('jfhg xdfjgj dfjghjkdfxh');
-
+        console.log('_______(❁´◡`❁)_________', currentGameInfo?.game_id);
+        console.log('gameData.game_id', gameData.game_id);
         if (
           currentGameInfo?.game_id !== gameData.game_id ||
           currentGameInfo?.length == 0
         ) {
-          console.log(
-            'oooooooooooooooooooooooooooooooooo',
-            currentGameInfo?.game_id,
-          );
+          console.log("............ ^_~ ..................", gameData)
           setCurrentGameInfo(gameData);
         }
-        console.log('}}}}}}}}}}', gameData.game_id);
+        console.log('_________game id', gameData.game_id);
         return gameData.game_id;
       }
     }
@@ -338,9 +353,9 @@ export default function TigerVsElephant({route}) {
   console.log('cutToMinuteGameTime', cutToMinuteGameTime);
 
   useEffect(() => {
-    const secTimer = setInterval(() => {
+    secTimer = setInterval(() => {
       const currentTime = new Date();
-      setDt(currentTime.toLocaleTimeString('en-US', {hour12: false}));
+      setDt(currentTime.toLocaleTimeString('en-US', { hour12: false }));
     }, 1000);
 
     return () => clearInterval(secTimer);
@@ -355,11 +370,54 @@ export default function TigerVsElephant({route}) {
   //   }
   // }, [cutToMinuteServerTime]);
 
-  useEffect(() => {
-    if (cutToMinuteGameTime == cutToMinuteServerTime) {
-      console.log('TRIGGEREED!!!!!');
-      handlePress();
+
+  function addOneMinute(time) {
+
+    if (!time) {
+      time = "00:00";
     }
+
+    // Split the time string into hours and minutes
+    var parts = time.split(':');
+    var hours = parseInt(parts[0]);
+    var minutes = parseInt(parts[1]);
+
+    // Subtract one minute
+    minutes -= 1;
+
+    // Adjust hours and minutes if necessary
+    if (minutes < 0) {
+      hours -= 1;
+      minutes += 60;
+    }
+    if (hours < 0) {
+      hours += 24;
+    }
+
+    // Format the result as HH:mm
+    var formattedHours = String(hours).padStart(2, '0');
+    var formattedMinutes = String(minutes).padStart(2, '0');
+
+    return formattedHours + ':' + formattedMinutes;
+  }
+
+
+  useEffect(() => {
+    console.log("*****************************************************")
+    console.log('cutToMinuteGameTime', cutToMinuteGameTime);
+    console.log('cutToMinuteGameTime', addOneMinute(cutToMinuteGameTime));
+    console.log('cutToMinuteServerTime', cutToMinuteServerTime);
+
+    // if (addOneMinute(cutToMinuteGameTime)) {
+    if (addOneMinute(cutToMinuteGameTime) == cutToMinuteServerTime) {
+      console.log('TRIGGEREED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+      clearInterval(secTimer)
+      handlePress();
+
+      
+
+    }
+    // }
   }, [cutToMinuteServerTime]);
 
   const sendBidData = async entryNumObj => {
@@ -406,6 +464,7 @@ export default function TigerVsElephant({route}) {
     Alert.alert('Coin added', 'Now click on TIGER/ELEPHANT.');
   };
 
+
   const handleEntryNumberPressed = async entryNumObj => {
     try {
       if (coinAmount != null) {
@@ -445,7 +504,7 @@ export default function TigerVsElephant({route}) {
 
   return (
     <SafeAreaView style={styles.outerContainer}>
-      <View style={{flex: 2}}>
+      <View style={{ flex: 2 }}>
         <TitleBar />
       </View>
       <ScrollView
@@ -467,12 +526,12 @@ export default function TigerVsElephant({route}) {
               {winnerState == '' ? (
                 <Image
                   source={tiger}
-                  style={{width: 'auto', height: normalize(150)}}
+                  style={{ width: 'auto', height: normalize(150) }}
                 />
               ) : (
                 <Image
                   source={winnerState == '0' ? tiger : ''}
-                  style={{width: 'auto', height: normalize(150)}}
+                  style={{ width: 'auto', height: normalize(150) }}
                 />
               )}
             </Animated.View>
@@ -483,12 +542,12 @@ export default function TigerVsElephant({route}) {
               {winnerState == '' ? (
                 <Image
                   source={elephant}
-                  style={{width: 'auto', height: normalize(150)}}
+                  style={{ width: 'auto', height: normalize(150) }}
                 />
               ) : (
                 <Image
                   source={winnerState == '1' ? elephant : ''}
-                  style={{width: 'auto', height: normalize(120)}}
+                  style={{ width: 'auto', height: normalize(120) }}
                 />
               )}
             </Animated.View>
@@ -516,8 +575,8 @@ export default function TigerVsElephant({route}) {
             {lastWinners[0]?.game_result == '0'
               ? 'Tiger'
               : lastWinners[0]?.game_result == '1'
-              ? 'Elephant'
-              : ''}
+                ? 'Elephant'
+                : ''}
           </Text>
         </View>
         {/* <View style={styles.btnContainer}>
@@ -541,11 +600,11 @@ export default function TigerVsElephant({route}) {
             flexDirection: 'row',
             justifyContent: 'space-around',
           }}>
-          <Text style={{fontWeight: '700', fontSize: normalize(18)}}>
+          <Text style={{ fontWeight: '700', fontSize: normalize(18) }}>
             {/* NEXT GAME IN: {gameTime[0]?.game_time} */}
             NEXT GAME IN: {nGTime}
           </Text>
-          <Text style={{fontWeight: '700', fontSize: normalize(18)}}>
+          <Text style={{ fontWeight: '700', fontSize: normalize(18) }}>
             NOW: {dt}
           </Text>
           {/* <Text></Text> */}
@@ -620,7 +679,7 @@ const styles = StyleSheet.create({
     borderRadius: normalize(20),
   },
   shadowProp: {
-    shadowOffset: {width: -2, height: 4},
+    shadowOffset: { width: -2, height: 4 },
     shadowColor: '#171717',
     shadowOpacity: 0.2,
     shadowRadius: 3,

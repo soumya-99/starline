@@ -249,6 +249,29 @@ const WheelOfFortune = ({route}) => {
         return gameTime[i].game_id;
       }
     }
+
+
+    for (const gameData of gameTimeArrayData ?? []) {
+      const checkgameTime = gameData.game_time;
+      nGTime = checkgameTime;
+      // console.log('checkgameTime, dt', checkgameTime, dt);
+
+      if (checkgameTime > dt) {
+        console.log('_______(❁´◡`❁)_________', currentGameInfo?.game_id);
+        console.log('gameData.game_id', gameData.game_id);
+        if (
+          currentGameInfo?.game_id !== gameData.game_id ||
+          currentGameInfo?.length == 0
+        ) {
+          console.log("............ ^_~ ..................", gameData)
+          setCurrentGameInfo(gameData);
+        }
+        console.log('_________game id', gameData.game_id);
+        return gameData.game_id;
+      }
+    }
+
+    
     return null; // Return null if no future game is found
   };
 
@@ -295,8 +318,45 @@ const WheelOfFortune = ({route}) => {
 
   console.log('DTDTDTDTDTDTDTTDTDTDTDTTDD', dt.slice(0, 8));
 
+
+
+  function addOneMinute(time) {
+
+    if (!time) {
+      time = "00:00";
+    }
+
+    // Split the time string into hours and minutes
+    var parts = time.split(':');
+    var hours = parseInt(parts[0]);
+    var minutes = parseInt(parts[1]);
+
+    // Subtract one minute
+    minutes -= 1;
+
+    // Adjust hours and minutes if necessary
+    if (minutes < 0) {
+      hours -= 1;
+      minutes += 60;
+    }
+    if (hours < 0) {
+      hours += 24;
+    }
+
+    // Format the result as HH:mm
+    var formattedHours = String(hours).padStart(2, '0');
+    var formattedMinutes = String(minutes).padStart(2, '0');
+
+    return formattedHours + ':' + formattedMinutes;
+  }
+
+
   useEffect(() => {
-    if (isLive && cutToMinuteGameTime == cutToMinuteServerTime) {
+    console.log('*******************************************');
+    console.log('cutToMinuteGameTime', cutToMinuteGameTime);
+    console.log('cutToMinuteGameTime', addOneMinute(cutToMinuteGameTime));
+    console.log('cutToMinuteServerTime', cutToMinuteServerTime);
+    if (isLive && addOneMinute(cutToMinuteGameTime) == cutToMinuteServerTime) {
       console.log('TRIGGEREED!!!!!');
       getWinnerIdx();
     }
